@@ -37,6 +37,10 @@ class MailLogRepository extends Repository
 
     protected bool $anonymize = true;
 
+    public function __construct(private readonly ConnectionPool $connectionPool)
+    {
+    }
+
     public function initializeObject(): void
     {
         /** @var Typo3QuerySettings $querySettings */
@@ -82,7 +86,7 @@ class MailLogRepository extends Repository
                 throw new Exception(sprintf('Given lifetime string in TypoScript is wrong. lifetime: "%s"', $this->lifetime), 9235306650);
             }
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
+            $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
             $queryBuilder->getRestrictions()->removeAll();
             $queryBuilder->delete('tx_maillogger_domain_model_maillog')
                 ->where($queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter($deletionTimestamp)))
@@ -101,7 +105,7 @@ class MailLogRepository extends Repository
                 throw new Exception(sprintf('Given lifetime string in TypoScript is wrong. anonymize: "%s"', $this->anonymizeAfter), 3198610142);
             }
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
+            $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
             $queryBuilder->getRestrictions()->removeAll();
             $queryBuilder->update('tx_maillogger_domain_model_maillog')
                 ->set('tstamp', time())
