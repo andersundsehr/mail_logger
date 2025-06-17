@@ -16,10 +16,10 @@
   },
   "require-dev": {
     "ext-json": "*",
-    "pluswerk/grumphp-config": "^7.1.0",
+    "pluswerk/grumphp-config": "^7.2.0",
     "saschaegerer/phpstan-typo3": "^1.10.2",
     "spatie/phpunit-snapshot-assertions": "^4.2.17",
-    "ssch/typo3-rector": "^2.12.2",
+    "ssch/typo3-rector": "^2.14.3",
     "typo3/testing-framework": "^7.1.1"
   },
   "replace": {
@@ -38,6 +38,7 @@
   },
   "config": {
     "allow-plugins": {
+      "cweagans/composer-patches": true,
       "ergebnis/composer-normalize": true,
       "phpro/grumphp": true,
       "phpstan/extension-installer": true,
