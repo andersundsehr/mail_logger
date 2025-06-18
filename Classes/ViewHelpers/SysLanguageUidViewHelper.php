@@ -10,6 +10,10 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class SysLanguageUidViewHelper extends AbstractViewHelper
 {
+    public function __construct(private readonly ConnectionPool $connectionPool)
+    {
+    }
+
     public function initializeArguments(): void
     {
         $this->registerArgument('uid', 'int', 'get sys_language.title by sys_language.uid');
@@ -27,7 +31,7 @@ class SysLanguageUidViewHelper extends AbstractViewHelper
 
     private function getSysLanguageRecord(int $uid): string
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+        $queryBuilder = $this->connectionPool
             ->getQueryBuilderForTable('sys_language');
         $queryBuilder->select('title')->from('sys_language')->where($queryBuilder->expr()->eq('uid', $uid));
         return $queryBuilder->executeQuery()->fetchOne() ?: (string)$uid;

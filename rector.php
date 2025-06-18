@@ -5,6 +5,7 @@ declare(strict_types=1);
 use PLUS\GrumPHPConfig\RectorSettings;
 use Rector\Config\RectorConfig;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
+use Ssch\TYPO3Rector\CodeQuality\General\GeneralUtilityMakeInstanceToConstructorPropertyRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->parallel();
@@ -36,6 +37,11 @@ return static function (RectorConfig $rectorConfig): void {
              * rector should not touch these files
              */
             __DIR__ . '/ext_emconf.php',
+
+            GeneralUtilityMakeInstanceToConstructorPropertyRector::class => [
+                __DIR__ . '/Classes/Domain/Repository/MailLogRepository.php', // can only be done if TYPO3 11 is not supported
+            ],
+
             //__DIR__ . '/src/Example',
             //__DIR__ . '/src/Example.php',
         ]
