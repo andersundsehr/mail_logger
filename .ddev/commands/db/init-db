@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+mysql -v -e 'GRANT ALL ON *.* TO "db"@"%";'
