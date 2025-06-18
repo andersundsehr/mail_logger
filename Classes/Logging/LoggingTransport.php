@@ -65,6 +65,11 @@ class LoggingTransport implements TransportInterface, Stringable
         return $sendResult->sentMessage;
     }
 
+    public function getOriginalTransport(): TransportInterface
+    {
+        return $this->originalTransport;
+    }
+
     private function originalSend(RawMessage $message, Envelope $envelope = null): SendResult
     {
         try {
