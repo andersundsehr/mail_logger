@@ -20,7 +20,7 @@ class MailUtility
      * @param array<array-key, mixed> $viewParameters This is necessary if you use Fluid for your mail fields
      * @throws Exception
      */
-    public static function getMailByKey(string $key, int $languageUid = null, array $viewParameters = []): TemplateBasedMailMessage
+    public static function getMailByKey(string $key, ?int $languageUid = null, array $viewParameters = []): TemplateBasedMailMessage
     {
         $mail = GeneralUtility::makeInstance(TemplateBasedMailMessage::class);
         $templateRepository = GeneralUtility::makeInstance(MailTemplateRepository::class);

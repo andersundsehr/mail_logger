@@ -34,7 +34,7 @@ class LoggingTransport implements TransportInterface, Stringable
     {
     }
 
-    public function send(RawMessage $message, Envelope $envelope = null): ?SentMessage
+    public function send(RawMessage $message, ?Envelope $envelope = null): ?SentMessage
     {
         $this->fixTcaIfNotPresentIsUsedInInstallTool();
 
@@ -70,7 +70,7 @@ class LoggingTransport implements TransportInterface, Stringable
         return $this->originalTransport;
     }
 
-    private function originalSend(RawMessage $message, Envelope $envelope = null): SendResult
+    private function originalSend(RawMessage $message, ?Envelope $envelope = null): SendResult
     {
         try {
             $sendMessage = $this->originalTransport->send($message, $envelope);

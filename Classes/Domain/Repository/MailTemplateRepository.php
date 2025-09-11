@@ -24,7 +24,7 @@ class MailTemplateRepository extends Repository
         $this->setDefaultQuerySettings($querySettings);
     }
 
-    public function findOneByTypoScriptKeyAndLanguage(string $typoScriptKey, int $languageUid = null): ?MailTemplate
+    public function findOneByTypoScriptKeyAndLanguage(string $typoScriptKey, ?int $languageUid = null): ?MailTemplate
     {
         $mailTemplate = null;
         if ($languageUid === null) {
