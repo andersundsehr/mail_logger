@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Mail\Mailer;
  */
 class MailerExtender extends Mailer
 {
-    public function __construct(TransportInterface $transport = null, EventDispatcherInterface $eventDispatcher = null)
+    public function __construct(?TransportInterface $transport = null, ?EventDispatcherInterface $eventDispatcher = null)
     {
         parent::__construct($transport, $eventDispatcher);
         $this->transport = new LoggingTransport($this->transport);
