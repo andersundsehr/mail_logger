@@ -1,0 +1,78 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:mailLogger="http://typo3.org/ns/Pluswerk/MailLogger/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+  <h1><mailLogger:translate id="module.mailLog.title.singleLog"/></h1>
+
+  <f:flashMessages />
+
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading"><mailLogger:translate id="module.mailLog.title.fromTo"/></div>
+        <div class="panel-body maillogger-panel-body">
+          <mailLogger:translate id="module.mailLog.mailFrom"/>: {mailLog.mailFrom}<br />
+          <mailLogger:translate id="module.mailLog.mailTo"/>: {mailLog.mailTo}<br />
+          <f:if condition="{mailLog.mailCopy}">
+            <mailLogger:translate id="module.mailLog.mailCopy"/>: {mailLog.mailCopy}<br />
+          </f:if>
+          <f:if condition="{mailLog.mailBlindCopy}">
+            <mailLogger:translate id="module.mailLog.mailBlindCopy"/>: {mailLog.mailBlindCopy}<br />
+          </f:if>
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading"><mailLogger:translate id="module.mailLog.title.info"/></div>
+        <div class="panel-body maillogger-panel-body">
+          <mailLogger:translate id="module.mailLog.subject"/>: {mailLog.subject}<br />
+          <f:if condition="{mailLog.typoScriptKey}">
+            <mailLogger:translate id="module.mailLog.typoScriptKey"/>: {mailLog.typoScriptKey}<br />
+          </f:if>
+          <mailLogger:translate id="module.mailLog.sysLanguageUid"/>: <mailLogger:sysLanguageUid uid="{mailLog.sysLanguageUid}" /><br />
+          <mailLogger:translate id="module.mailLog.result_message"/>: {mailLog.result}<br />
+          <mailLogger:translate id="module.mailLog.date"/>: <f:format.date format="d.m.Y H:i:s">{mailLog.crdate}</f:format.date><br />
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading"><mailLogger:translate id="module.mailLog.title.message"/></div>
+        <div class="panel-body maillogger-panel-body">
+          <iframe class="iframe-content" data-content=".mailLog-message" src="about:blank" style="height: 300px; width: 100%;" frameborder="0" seamless></iframe>
+          <div class="hidden mailLog-message">
+            <f:if condition="{mailLogger:isPlainTextMailLog(mailLog: '{mailLog}')}">
+              <f:then>
+                <f:format.nl2br>{mailLog.message}</f:format.nl2br>
+              </f:then>
+              <f:else>
+                <f:format.raw>{mailLog.message}</f:format.raw>
+              </f:else>
+            </f:if>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading"><mailLogger:translate id="module.mailLog.title.headers"/></div>
+        <div class="panel-body maillogger-panel-body">
+          <f:format.nl2br>{mailLog.headers}</f:format.nl2br>
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading"><mailLogger:translate id="module.mailLog.title.debug"/></div>
+        <div class="panel-body maillogger-panel-body">
+          <f:format.nl2br>{mailLog.debug}</f:format.nl2br>
+        </div>
+      </div>
+    </div>
+
+  </div>

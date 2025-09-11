@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Logging;
 
+use Override;
 use Stringable;
 use Throwable;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
@@ -34,6 +35,7 @@ class LoggingTransport implements TransportInterface, Stringable
     {
     }
 
+    #[Override]
     public function send(RawMessage $message, ?Envelope $envelope = null): ?SentMessage
     {
         $this->fixTcaIfNotPresentIsUsedInInstallTool();
@@ -99,6 +101,7 @@ class LoggingTransport implements TransportInterface, Stringable
         }
     }
 
+    #[Override]
     public function __toString(): string
     {
         return $this->originalTransport->__toString();

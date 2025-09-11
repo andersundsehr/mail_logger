@@ -8,7 +8,6 @@ use Exception;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 class ConfigurationUtility
 {
@@ -22,7 +21,8 @@ class ConfigurationUtility
     {
         if (!self::$currentModuleConfiguration) {
             // we always use the BackendConfigurationManager, because flux is overwriting the ConfigurationManager and always uses the FrontendConfigurationManager instead of the correct one for the current context
-            $fullTypoScript = GeneralUtility::makeInstance(BackendConfigurationManager::class)->getTypoScriptSetup();
+            $request = $GLOBALS['TYPO3_REQUEST'] ?? throw new Exception('No $GLOBALS[\'TYPO3_REQUEST\'] found', 1688138054);
+            $fullTypoScript = GeneralUtility::makeInstance(BackendConfigurationManager::class)->getTypoScriptSetup($request);
 
             $typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
 

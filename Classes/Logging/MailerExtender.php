@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Logging;
 
+use Override;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use TYPO3\CMS\Core\Mail\Mailer;
@@ -19,6 +20,7 @@ class MailerExtender extends Mailer
         $this->transport = new LoggingTransport($this->transport);
     }
 
+    #[Override]
     public function getRealTransport(): TransportInterface
     {
         return new LoggingTransport(parent::getRealTransport());

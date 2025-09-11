@@ -2,8 +2,11 @@
 
 namespace Pluswerk\MailLogger\Tests\Functional\MailLogRepository;
 
+use Override;
+
 final class AnonymizeDirectlyLifeTimeEmptyTest extends AbstractMailLogRepositoryTest
 {
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

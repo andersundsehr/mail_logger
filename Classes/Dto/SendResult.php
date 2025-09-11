@@ -8,14 +8,14 @@ use Symfony\Component\Mailer\SentMessage;
 use Throwable;
 use TYPO3\CMS\Core\Core\Environment;
 
-final class SendResult
+final readonly class SendResult
 {
     public function __construct(
-        public readonly string $result,
-        public readonly MailStatus $status,
-        public readonly string $debug = '',
-        public readonly ?SentMessage $sentMessage = null,
-        public readonly ?Throwable $throwable = null,
+        public string $result,
+        public MailStatus $status,
+        public string $debug = '',
+        public ?SentMessage $sentMessage = null,
+        public ?Throwable $throwable = null,
     ) {
     }
 

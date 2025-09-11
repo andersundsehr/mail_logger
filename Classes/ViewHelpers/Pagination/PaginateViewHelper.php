@@ -85,7 +85,7 @@ class PaginateViewHelper extends AbstractViewHelper
      */
     protected static function getPageNumber(array $arguments): int
     {
-        $variables = GeneralUtility::_GP('tx_maillogger_iocenter');
+        $variables = $GLOBALS['TYPO3_REQUEST']->getParsedBody()['tx_maillogger_iocenter'] ?? $GLOBALS['TYPO3_REQUEST']->getQueryParams()['tx_maillogger_iocenter'] ?? null;
         return (int)($variables[self::getName($arguments)]['currentPage'] ?? 1);
     }
 

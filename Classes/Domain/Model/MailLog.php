@@ -8,10 +8,7 @@ use Pluswerk\MailLogger\Dto\MailStatus;
 
 class MailLog extends AbstractModel
 {
-    /**
-     * @var int
-     */
-    final public const MEBI_BYTE = 1048576;
+    final public const int MEBI_BYTE = 1048576;
 
     protected string $typoScriptKey = '';
 

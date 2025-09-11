@@ -10,6 +10,6 @@ defined('TYPO3') || die();
     ExtensionManagementUtility::addStaticFile(
         'mail_logger',
         'Configuration/TypoScript',
-        '+Pluswerk AG: Mail Log'
+        'Mail Logger by anders und sehr GmbH'
     );
 })();

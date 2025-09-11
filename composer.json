@@ -1,27 +1,29 @@
 {
   "name": "pluswerk/mail-logger",
-  "description": "+Pluswerk TYPO3 extension: Mail Logger",
+  "description": "Mail Logger by anders und sehr GmbH",
   "license": "GPL-2.0-or-later",
   "type": "typo3-cms-extension",
-  "homepage": "https://www.pluswerk.ag/",
+  "homepage": "https://www.andersundsehr.com/",
   "support": {
     "issues": "https://github.com/pluswerk/mail_logger/issues",
     "source": "https://github.com/pluswerk/mail_logger",
     "docs": "https://github.com/pluswerk/mail_logger/blob/master/Readme.md"
   },
   "require": {
-    "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+    "php": "~8.3.0 || ~8.4.0",
     "composer-runtime-api": "^2",
-    "typo3/cms-core": "^11.5.0 || ^12.4.0"
+    "typo3/cms-core": "^12.4.0 || ^13.4.0"
   },
   "require-dev": {
     "ext-json": "*",
+    "andersundsehr/no-ci": "^1.0",
+    "helhum/typo3-console": "^8.2.2",
     "phpunit/phpunit": "^10.5.54",
     "pluswerk/grumphp-config": "^7.2.0 || ^10.1.3",
     "saschaegerer/phpstan-typo3": "^1.10.2 || ^2.1.1",
-    "spatie/phpunit-snapshot-assertions": "^4.2.17 || ^5.2.2",
+    "spatie/phpunit-snapshot-assertions": "^5.2.2",
     "ssch/typo3-rector": "^2.15.2 || ^3.6.2",
-    "typo3/testing-framework": "^7.1.1 || ^8.2.7 || ^9"
+    "typo3/testing-framework": "^8.2.7 || ^9.2.0"
   },
   "replace": {
     "pluswerk/mail_logger": "self.version",
@@ -39,6 +41,7 @@
   },
   "config": {
     "allow-plugins": {
+      "andersundsehr/no-ci": true,
       "cweagans/composer-patches": true,
       "ergebnis/composer-normalize": true,
       "phpro/grumphp": true,
@@ -58,6 +61,11 @@
     "post-update-cmd": [
       "@composer bump --dev-only",
       "@composer normalize"
+    ],
+    "post-autoload-dump": [
+      "@php vendor/bin/typo3 install:fixfolderstructure -vvv",
+      "@no-ci @php vendor/bin/typo3 database:updateschema -vvv",
+      "@no-ci @php vendor/bin/typo3 cache:flush -vvv"
     ],
     "test": "vendor/bin/phpunit --color=always",
     "test:update": "vendor/bin/phpunit --color=always -d --update-snapshots"

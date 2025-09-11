@@ -4,9 +4,12 @@
 
 namespace Pluswerk\MailLogger\Tests\Functional\MailLogRepository;
 
+use Override;
 use ReflectionObject;
 use DateTime;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Extbase\Persistence\Generic\Exception\NotImplementedException;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
@@ -29,10 +32,13 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
         'typo3conf/ext/mail_logger',
     ];
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
+        // TYPO3 request needed for ConfigurationManager to work. fake it as backend request here
+        $GLOBALS['TYPO3_REQUEST'] = (new ServerRequest())->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_BE);
     }
 
     public function testInitializeObject(): void
