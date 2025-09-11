@@ -1,0 +1,144 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:mailLogger="http://typo3.org/ns/Pluswerk/MailLogger/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+  <f:flashMessages/>
+
+  <h1><mailLogger:translate id="module.dashboard.title"/></h1>
+
+  <f:flashMessages />
+
+  <!-- E-Mail Log -->
+  <div class="row">
+    <div class="col col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <mailLogger:translate id="module.mailLog.title"/>
+        </div>
+        <div class="maillogger-panel-body table-fit">
+          <mailLogger:pagination.paginate objects="{mailLogs}" as="paginatedMailLogs">
+            <table class="maillogger-task-list table table-striped table-hover">
+              <thead>
+              <tr>
+                <th>
+                  <mailLogger:translate id="module.mailLog.date"/>
+                </th>
+                <th>
+                  <mailLogger:translate id="module.mailLog.status"/>
+                </th>
+                <th>
+                  <mailLogger:translate id="module.mailLog.typoScriptKey"/>
+                </th>
+                <th>
+                  <mailLogger:translate id="module.mailLog.subject"/>
+                </th>
+                <th>
+                  <mailLogger:translate id="module.mailLog.mailFrom"/>
+                </th>
+                <th>
+                  <mailLogger:translate id="module.mailLog.mailTo"/>
+                </th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <f:for each="{paginatedMailLogs.paginator.paginatedItems}" as="item">
+                <tr>
+                  <td>
+                    <f:format.date format="Y-m-d H:i:s">{item.crdate}</f:format.date>
+                  </td>
+                  <td>
+                    <f:if condition="{item.status} == 1">
+                      <span title="ok"><core:icon identifier="actions-check-circle-alt"/></span>
+                    </f:if>
+                    <f:if condition="{item.status} == 2">
+                      <span title="E-Mail not sent"><core:icon identifier="actions-exclamation-circle-alt"/></span>
+                    </f:if>
+                    <f:if condition="{item.status} == 3">
+                      <span title="E-Mail queued"><core:icon identifier="actions-info-circle"/></span>
+                    </f:if>
+                  </td>
+                  <td>{item.typoScriptKey}</td>
+                  <td>{item.subject}</td>
+                  <td>{item.mailFrom}</td>
+                  <td>{item.mailTo}</td>
+                  <td>
+                    <f:link.action action="show" controller="MailLog" arguments="{mailLog : item}" class="btn btn-default maillogger-open-modal">
+                      <mailLogger:translate id="module.mailLog.details"/>
+                    </f:link.action>
+                  </td>
+                </tr>
+              </f:for>
+              </tbody>
+            </table>
+            <div style="padding: 1rem">
+              <f:alias map="{pagination:paginatedMailLogs.pagination, paginator:paginatedMailLogs.paginator, name:paginatedMailLogs.name}">
+
+                <f:if condition="{paginator.numberOfPages} >= 1">
+                  <nav aria-label="pagebrowser">
+                    <h4>Page {paginator.currentPageNumber} of {paginator.numberOfPages}</h4>
+                    <ul class="f3-widget-paginator pagination">
+                      <f:if condition="{pagination.previousPageNumber} && {pagination.previousPageNumber} >= {pagination.firstPageNumber}">
+                        <li class="first">
+                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.firstPageNumber}',name:name)}" title="first" class="page-link">
+                            |<
+                          </a>
+                        </li>
+                        <li class="previous">
+                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.previousPageNumber}',name:name)}" title="previous" class="page-link">
+                            &lt;<
+                          </a>
+                        </li>
+                      </f:if>
+                      <f:if condition="{pagination.hasLessPages}">
+                        <li class="page-item">…</li>
+                      </f:if>
+                      <f:for each="{pagination.allPageNumbers}" as="page">
+                        <f:if condition="{page} == {paginator.currentPageNumber}">
+                          <f:then>
+                            <li class="page-item current active">
+                              <span class="page-link">{page}</span>
+                            </li>
+                          </f:then>
+                          <f:else>
+                            <f:if condition="{page + 5} > {paginator.currentPageNumber} && {page - 5} < {paginator.currentPageNumber}">
+                              <f:then>
+                                <li class="page-item">
+                                  <a href="{mailLogger:pagination.uri(arguments:'{currentPage:page}',name:name)}" class="page-link">{page}</a>
+                                </li>
+                              </f:then>
+                            </f:if>
+                          </f:else>
+                        </f:if>
+                      </f:for>
+                      <f:if condition="{pagination.hasMorePages}">
+                        <li class="page-item">…</li>
+                      </f:if>
+                      <f:if condition="{pagination.nextPageNumber} && {pagination.nextPageNumber} <= {pagination.lastPageNumber}">
+                        <li class="next">
+                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.nextPageNumber}',name:name)}" title="next" class="page-link">
+                            &gt;>
+                          </a>
+                        </li>
+                        <li class="last">
+                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.lastPageNumber}',name:name)}" title="last" class="page-link">
+                            &gt;|
+                          </a>
+                        </li>
+                      </f:if>
+                    </ul>
+                  </nav>
+                </f:if>
+
+              </f:alias>
+            </div>
+          </mailLogger:pagination.paginate>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</f:section>

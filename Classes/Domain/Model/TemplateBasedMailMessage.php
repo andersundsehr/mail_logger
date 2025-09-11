@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Domain\Model;
 
+use Override;
 use Exception;
 use Pluswerk\MailLogger\Utility\ConfigurationUtility;
 use Symfony\Component\Mime\Crypto\DkimSigner;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+
+use function array_filter;
 
 class TemplateBasedMailMessage extends MailMessage
 {
@@ -108,6 +111,7 @@ class TemplateBasedMailMessage extends MailMessage
         }
     }
 
+    #[Override]
     public function send(): bool
     {
         try {
@@ -253,11 +257,7 @@ class TemplateBasedMailMessage extends MailMessage
      */
     private function assignMailTemplatePaths(array $values): void
     {
-        if (!$this->messageView->getTemplatePathAndFilename()) {
-            $this->messageView->setTemplatePathAndFilename(
-                GeneralUtility::getFileAbsFileName($values['templatePaths']['templatePath'] ?: $values['defaultTemplatePaths']['templatePath'])
-            );
-
+        if (!$this->messageView->getPartialRootPaths()) {
             $this->messageView->setPartialRootPaths(
                 array_filter(
                     [
@@ -266,6 +266,11 @@ class TemplateBasedMailMessage extends MailMessage
                     ]
                 )
             );
+
+            $this->messageView->setTemplatePathAndFilename(
+                GeneralUtility::getFileAbsFileName($values['templatePaths']['templatePath'] ?: $values['defaultTemplatePaths']['templatePath'])
+            );
+
             $this->messageView->setLayoutRootPaths(
                 array_filter(
                     [

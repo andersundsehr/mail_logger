@@ -3,7 +3,7 @@
 [![GitHub License](https://img.shields.io/github/license/pluswerk/mail_logger.svg?style=flat-square)](https://github.com/pluswerk/mail_logger/blob/master/LICENSE.txt)
 [![Build Status](https://travis-ci.org/pluswerk/mail_logger.svg?branch=master)](https://travis-ci.org/pluswerk/mail_logger)
 
-# +Pluswerk TYPO3 extension: Mail Logger
+# EXT:mail_logger by anders und sehr GmbH
 
 This is an TYPO3 extension with some mail functions:
 1. [E-mail logging](#1-e-mail-logging)
@@ -210,3 +210,11 @@ module.tx_maillogger.settings.dkim {
     }
 }
 ```
+
+# with ♥️ from anders und sehr GmbH
+
+> If something did not work 😮  
+> or you appreciate this Extension 🥰 let us know.
+
+> We are always looking for great people to join our team!
+> https://www.andersundsehr.com/karriere/

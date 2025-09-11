@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\ViewHelpers\Pagination;
 
+use Override;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
@@ -17,6 +18,7 @@ class UriViewHelper extends AbstractTagBasedViewHelper
     /**
      * Initialize arguments
      */
+    #[Override]
     public function initializeArguments(): void
     {
         parent::initializeArguments();
@@ -29,6 +31,7 @@ class UriViewHelper extends AbstractTagBasedViewHelper
      *
      * @return string The rendered uri
      */
+    #[Override]
     public function render(): string
     {
         $pluginNamespace = 'tx_maillogger_iocenter';

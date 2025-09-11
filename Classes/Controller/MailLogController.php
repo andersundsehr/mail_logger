@@ -20,6 +20,7 @@ class MailLogController extends ActionController
     public function __construct(
         private readonly MailLogRepository $mailLogRepository,
         private readonly ModuleTemplateFactory $moduleTemplateFactory,
+        private readonly PageRenderer $pageRenderer,
     ) {
     }
 
@@ -30,15 +31,11 @@ class MailLogController extends ActionController
     {
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         // Add required js files.
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        assert($pageRenderer instanceof PageRenderer);
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/MailLogger/Main');
+        $this->pageRenderer->loadJavaScriptModule('@pluswerk/mail-logger/Main.js');
 
-        // Assign all logged mails to template.
-        $this->view->assign('mailLogs', $this->mailLogRepository->findAll());
+        $moduleTemplate->assign('mailLogs', $this->mailLogRepository->findAll());
 
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse('MailLog/Dashboard');
     }
 
     /**
@@ -46,8 +43,9 @@ class MailLogController extends ActionController
      */
     public function showAction(MailLog $mailLog): ResponseInterface
     {
-        $this->view->assign('mailLog', $mailLog);
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->assign('mailLog', $mailLog);
 
-        return $this->htmlResponse();
+        return $moduleTemplate->renderResponse('MailLog/Show');
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Domain\Repository;
 
+use Override;
 use DateTime;
 use Exception;
 use InvalidArgumentException;
@@ -36,6 +37,14 @@ class MailLogRepository extends Repository
     protected string $anonymizeSymbol = '***';
 
     protected bool $anonymize = true;
+
+    /**
+     * Constructs a new Repository
+     */
+    public function __construct(private readonly ConnectionPool $connectionPool)
+    {
+        parent::__construct();
+    }
 
     public function initializeObject(): void
     {
@@ -82,11 +91,11 @@ class MailLogRepository extends Repository
                 throw new Exception(sprintf('Given lifetime string in TypoScript is wrong. lifetime: "%s"', $this->lifetime), 9235306650);
             }
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
+            $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
             $queryBuilder->getRestrictions()->removeAll();
             $queryBuilder->delete('tx_maillogger_domain_model_maillog')
                 ->where($queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter($deletionTimestamp)))
-                ->execute();
+                ->executeStatement();
         }
     }
 
@@ -101,7 +110,7 @@ class MailLogRepository extends Repository
                 throw new Exception(sprintf('Given lifetime string in TypoScript is wrong. anonymize: "%s"', $this->anonymizeAfter), 3198610142);
             }
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
+            $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_maillogger_domain_model_maillog');
             $queryBuilder->getRestrictions()->removeAll();
             $queryBuilder->update('tx_maillogger_domain_model_maillog')
                 ->set('tstamp', time())
@@ -114,13 +123,14 @@ class MailLogRepository extends Repository
                 ->set('headers', $this->anonymizeSymbol)
                 ->set('debug', $this->anonymizeSymbol)
                 ->where($queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter($timestamp)))
-                ->execute();
+                ->executeStatement();
         }
     }
 
     /**
      * @param MailLog $mailLog
      */
+    #[Override]
     public function add($mailLog): void
     {
         assert($mailLog instanceof MailLog);
@@ -139,6 +149,7 @@ class MailLogRepository extends Repository
     /**
      * @param MailLog $mailLog
      */
+    #[Override]
     public function update($mailLog): void
     {
         assert($mailLog instanceof MailLog);

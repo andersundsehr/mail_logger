@@ -14,10 +14,10 @@ class MailTemplate implements SingletonInterface
      */
     public function getTypoScriptKeys(array &$config): void
     {
-        $items = [['', '']];
+        $items = [['label' => '', 'value' => '']];
         $settings = ConfigurationUtility::getCurrentModuleConfiguration('settings');
         foreach ($settings['mailTemplates'] ?? [] as $key => $value) {
-            $items[] = [$value['label'] ?: $key, $key];
+            $items[] = ['label' => (string)($value['label'] ?: $key), 'value' => (string)$key];
         }
 
         $config['items'] = array_merge($config['items'], $items);
@@ -28,10 +28,10 @@ class MailTemplate implements SingletonInterface
      */
     public function getDkimKeys(array &$config): void
     {
-        $items = [['', '']];
+        $items = [['label' => '', 'value' => '']];
         $settings = ConfigurationUtility::getCurrentModuleConfiguration('settings');
         foreach ($settings['dkim'] ?? [] as $key => $value) {
-            $items[] = [$value['domain'] ?: $key, $key];
+            $items[] = ['label' => (string)($value['domain'] ?: $key), 'value' => (string)$key];
         }
 
         $config['items'] = array_merge($config['items'], $items);
@@ -46,7 +46,7 @@ class MailTemplate implements SingletonInterface
         $settings = ConfigurationUtility::getCurrentModuleConfiguration('settings');
         if (!empty($settings['templateOverrides'])) {
             foreach ($settings['templateOverrides'] as $key => $value) {
-                $items[] = [$value['title'] ?: $key, $key];
+                $items[] = ['label' => (string)($value['title'] ?: $key), 'value' => (string)$key];
             }
         }
 

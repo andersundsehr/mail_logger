@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\Domain\Repository;
 
 use Pluswerk\MailLogger\Domain\Model\MailTemplate;
+use TYPO3\CMS\Core\Context\LanguageAspect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Session;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
@@ -26,25 +27,26 @@ class MailTemplateRepository extends Repository
 
     public function findOneByTypoScriptKeyAndLanguage(string $typoScriptKey, ?int $languageUid = null): ?MailTemplate
     {
-        $mailTemplate = null;
         if ($languageUid === null) {
-            $mailTemplate = $this->findOneByTypoScriptKey($typoScriptKey);
-        } else {
-            // Destroy session because the objects are stored there without language
-            /** @var Session $session */
-            $session = GeneralUtility::makeInstance(Session::class);
-            $session->destroy();
-
-            $query = $this->createQuery();
-            $querySettings = $query->getQuerySettings();
-            assert($querySettings instanceof Typo3QuerySettings);
-            $querySettings->setLanguageUid($languageUid);
-            $query->matching($query->equals('typoScriptKey', $typoScriptKey));
-            $query->setLimit(1);
-            $mailTemplate = $query->execute(false)->getFirst();
-
-            $session->destroy();
+            return $this->findOneByTypoScriptKey($typoScriptKey);
         }
+
+        // Destroy session because the objects are stored there without language
+        /** @var Session $session */
+        $session = GeneralUtility::makeInstance(Session::class);
+        $session->destroy();
+
+        $query = $this->createQuery();
+        $querySettings = $query->getQuerySettings();
+        assert($querySettings instanceof Typo3QuerySettings);
+        $querySettings->setLanguageAspect(new LanguageAspect($languageUid));
+        $query->matching($query->equals('typoScriptKey', $typoScriptKey));
+        $query->setLimit(1);
+
+        $mailTemplate = $query->execute(false)->getFirst();
+
+        $session->destroy();
+
 
         return $mailTemplate;
     }

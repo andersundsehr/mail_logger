@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\ViewHelpers;
 
+use Override;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
