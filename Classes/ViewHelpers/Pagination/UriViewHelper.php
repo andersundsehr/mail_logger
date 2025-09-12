@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\ViewHelpers\Pagination;
 
 use Override;
-use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Routing\Route as SymfonyRoute;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\Route;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class UriViewHelper extends AbstractTagBasedViewHelper
@@ -27,16 +31,17 @@ class UriViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * Build an uri to current action with &tx_ext_plugin[currentPage]=2
+     * Build an uri to current action with &tx_maillogger_iocenter[currentPage]=2
      *
      * @return string The rendered uri
      */
     #[Override]
     public function render(): string
     {
-        $pluginNamespace = 'tx_maillogger_iocenter';
-        $argumentPrefix = $pluginNamespace . '[' . $this->arguments['name'] . ']';
+        $argumentPrefix = 'tx_maillogger_iocenter[' . $this->arguments['name'] . ']';
+
         $arguments = $this->hasArgument('arguments') ? $this->arguments['arguments'] : [];
+
         if ($this->hasArgument('action')) {
             $arguments['action'] = $this->arguments['action'];
         }
@@ -45,10 +50,15 @@ class UriViewHelper extends AbstractTagBasedViewHelper
             $arguments['format'] = $this->arguments['format'];
         }
 
-        return $this->uriBuilder->reset()
-            ->setArguments([$argumentPrefix => $arguments])
-            ->setAddQueryString(true)
-            ->setArgumentsToBeExcludedFromQueryString([$argumentPrefix, 'cHash'])
-            ->build();
+        $request = $this->renderingContext->hasAttribute(ServerRequestInterface::class)
+            ? $this->renderingContext->getAttribute(ServerRequestInterface::class)
+            : $GLOBALS['TYPO3_REQUEST'];
+
+        $route = $request->getAttribute('route');
+        if (!$route instanceof Route && !$route instanceof SymfonyRoute) {
+            throw new RouteNotFoundException('No route object was given inside the request object', 1691423325);
+        }
+
+        return $this->uriBuilder->buildUriFromRoute($route->getOption('_identifier'), [$argumentPrefix => $arguments])->__toString();
     }
 }
