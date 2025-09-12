@@ -5,9 +5,9 @@
   "type": "typo3-cms-extension",
   "homepage": "https://www.andersundsehr.com/",
   "support": {
-    "issues": "https://github.com/pluswerk/mail_logger/issues",
-    "source": "https://github.com/pluswerk/mail_logger",
-    "docs": "https://github.com/pluswerk/mail_logger/blob/master/Readme.md"
+    "issues": "https://github.com/andersundsehr/mail_logger/issues",
+    "source": "https://github.com/andersundsehr/mail_logger",
+    "docs": "https://github.com/andersundsehr/mail_logger/blob/master/README.md"
   },
   "require": {
     "php": "~8.3.0 || ~8.4.0",
