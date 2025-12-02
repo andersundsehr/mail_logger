@@ -39,7 +39,7 @@ class TestMailCommand extends Command
 
         $args = $input->getArguments();
         if ($args['templatekey'] !== '') {
-            $mail = MailUtility::getMailByKey($args['templatekey'], null);
+            $mail = MailUtility::getMailByKey($args['templatekey']);
         } else {
             $mail = GeneralUtility::makeInstance(MailMessage::class);
             $mail
