@@ -10,17 +10,23 @@ use TYPO3\CMS\Extbase\Configuration\Exception\NoServerRequestGivenException;
 class CleanupSettingsService
 {
     private const string DEFAULT_LIFETIME = '30 days';
+
     private const string DEFAULT_ANONYMIZE_AFTER = '7 days';
+
     private const string ANONYMIZE_SYMBOL = '***';
 
     private bool $loaded = false;
+
     private string $lifetime = self::DEFAULT_LIFETIME;
+
     private bool $anonymize = true;
+
     private string $anonymizeAfter = self::DEFAULT_ANONYMIZE_AFTER;
 
     public function __construct(
         private readonly ConfigurationManagerInterface $configurationManager,
-    ) {}
+    ) {
+    }
 
     public function isLoaded(): bool
     {

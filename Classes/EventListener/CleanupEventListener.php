@@ -17,12 +17,13 @@ final readonly class CleanupEventListener
 {
     public function __construct(
         private CleanupService $cleanupService,
-    ) {}
+    ) {
+    }
 
     /**
      * Triggered on frontend page render
      */
-    public function onFrontendRender(AfterCacheableContentIsGeneratedEvent $event): void
+    public function onFrontendRender(): void
     {
         $this->runCleanup();
     }
@@ -30,7 +31,7 @@ final readonly class CleanupEventListener
     /**
      * Triggered on backend page render
      */
-    public function onBackendRender(AfterBackendPageRenderEvent $event): void
+    public function onBackendRender(): void
     {
         $this->runCleanup();
     }

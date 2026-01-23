@@ -16,6 +16,7 @@ class CleanupService implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     private const string CACHE_KEY = 'tx_maillogger_cleanup_lock';
+
     private const string TABLE_NAME = 'tx_maillogger_domain_model_maillog';
 
     public function __construct(
@@ -23,7 +24,8 @@ class CleanupService implements LoggerAwareInterface
         private readonly CleanupSettingsService $cleanupSettingsService,
         private readonly FrontendInterface $cache,
         private readonly ExtensionConfiguration $extensionConfiguration,
-    ) {}
+    ) {
+    }
 
     /**
      * Try to run cleanup if not already running and interval has passed.
