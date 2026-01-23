@@ -6,8 +6,6 @@ namespace Pluswerk\MailLogger\EventListener;
 
 use Pluswerk\MailLogger\Service\CleanupService;
 use Throwable;
-use TYPO3\CMS\Backend\Controller\Event\AfterBackendPageRenderEvent;
-use TYPO3\CMS\Frontend\Event\AfterCacheableContentIsGeneratedEvent;
 
 /**
  * Event listener that triggers mail log cleanup on frontend and backend requests.
@@ -20,23 +18,7 @@ final readonly class CleanupEventListener
     ) {
     }
 
-    /**
-     * Triggered on frontend page render
-     */
-    public function onFrontendRender(): void
-    {
-        $this->runCleanup();
-    }
-
-    /**
-     * Triggered on backend page render
-     */
-    public function onBackendRender(): void
-    {
-        $this->runCleanup();
-    }
-
-    private function runCleanup(): void
+    public function __invoke(): void
     {
         try {
             $this->cleanupService->tryRunCleanup();

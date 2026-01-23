@@ -40,9 +40,7 @@ services:
     tags:
       - name: event.listener
         identifier: 'mail-logger/cleanup-frontend'
-        method: 'onFrontendRender'
         event: TYPO3\CMS\Frontend\Event\AfterCacheableContentIsGeneratedEvent
       - name: event.listener
         identifier: 'mail-logger/cleanup-backend'
-        method: 'onBackendRender'
         event: TYPO3\CMS\Backend\Controller\Event\AfterBackendPageRenderEvent

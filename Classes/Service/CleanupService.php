@@ -104,6 +104,7 @@ class CleanupService implements LoggerAwareInterface
         }
 
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
+        $namedParameterAnonymizeSymbol = $queryBuilder->createNamedParameter($anonymizeSymbol);
         $queryBuilder->getRestrictions()->removeAll();
         $queryBuilder->update(self::TABLE_NAME)
             ->set('tstamp', time())
@@ -119,14 +120,14 @@ class CleanupService implements LoggerAwareInterface
                 $queryBuilder->expr()->lte('crdate', $queryBuilder->createNamedParameter($timestamp)),
                 // Skip already fully anonymized records
                 $queryBuilder->expr()->or(
-                    $queryBuilder->expr()->neq('subject', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('message', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('mail_from', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('mail_to', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('mail_copy', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('mail_blind_copy', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('headers', $queryBuilder->createNamedParameter($anonymizeSymbol)),
-                    $queryBuilder->expr()->neq('debug', $queryBuilder->createNamedParameter($anonymizeSymbol)),
+                    $queryBuilder->expr()->neq('subject', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('message', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('mail_from', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('mail_to', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('mail_copy', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('mail_blind_copy', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('headers', $namedParameterAnonymizeSymbol),
+                    $queryBuilder->expr()->neq('debug', $namedParameterAnonymizeSymbol),
                 ),
             )
             ->executeStatement();
@@ -134,11 +135,8 @@ class CleanupService implements LoggerAwareInterface
 
     private function getCleanupMinInterval(): int
     {
-        try {
-            $config = $this->extensionConfiguration->get('mail_logger');
-            return (int)($config['cleanupMinInterval'] ?? 3600);
-        } catch (Exception) {
-            return 3600;
-        }
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $config = $this->extensionConfiguration->get('mail_logger');
+        return (int)($config['cleanupMinInterval'] ?? 3600);
     }
 }
