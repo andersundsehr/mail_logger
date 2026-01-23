@@ -1,0 +1,2 @@
+# cat=Cleanup; type=int+; label=Minimum interval between cleanup runs (in seconds)
+cleanupMinInterval = 3600

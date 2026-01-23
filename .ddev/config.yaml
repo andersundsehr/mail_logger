@@ -18,6 +18,10 @@ web_environment:
     - typo3DatabasePassword=db
 corepack_enable: false
 
+hooks:
+    post-start:
+        - exec-host: ddev mysql -uroot -proot -e "GRANT ALL ON \`db_%\`.* TO 'db'@'%';"
+
 # Key features of DDEV's config.yaml:
 
 # name: <projectname> # Name of the project, automatically provides
