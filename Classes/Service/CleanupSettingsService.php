@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Service;
 
+use RuntimeException;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Configuration\Exception\NoServerRequestGivenException;
 
 class CleanupSettingsService
 {
@@ -67,7 +67,7 @@ class CleanupSettingsService
             $fullSettings = $this->configurationManager->getConfiguration(
                 ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
             );
-        } catch (NoServerRequestGivenException) {
+        } catch (RuntimeException) {
             // Some rare cases have no server request available yet.
             // Keep defaults and mark as not loaded so callers can check via isLoaded().
             return;
