@@ -14,6 +14,12 @@ services:
     resource: '../Classes/Domain/Model/*'
     shared: false
 
+  Pluswerk\MailLogger\Logging\MailerExtender:
+    arguments:
+      $loggingTransportFactory: '@Pluswerk\MailLogger\Logging\LoggingTransportFactory'
+      $transport: null
+      $eventDispatcher: null
+
   TYPO3\CMS\Core\Mail\MailerInterface:
     alias: Pluswerk\MailLogger\Logging\MailerExtender
   TYPO3\CMS\Core\Mail\Mailer:
@@ -25,3 +31,16 @@ services:
         command: 'maillogger:testmail'
         description: 'This command sends a mail with your complete setup and logs it. Additionally you can provide a mail template key and test your template in the default language, of course without variables.'
         schedulable: false
+
+  Pluswerk\MailLogger\Service\CleanupService:
+    arguments:
+      $cache: '@cache.hash'
+
+  Pluswerk\MailLogger\EventListener\CleanupEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'mail-logger/cleanup-frontend'
+        event: TYPO3\CMS\Frontend\Event\AfterCacheableContentIsGeneratedEvent
+      - name: event.listener
+        identifier: 'mail-logger/cleanup-backend'
+        event: TYPO3\CMS\Backend\Controller\Event\AfterBackendPageRenderEvent

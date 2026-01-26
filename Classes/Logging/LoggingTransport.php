@@ -29,10 +29,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
-class LoggingTransport implements TransportInterface, Stringable
+class LoggingTransport implements TransportInterface
 {
-    public function __construct(protected TransportInterface $originalTransport)
-    {
+    public function __construct(
+        protected TransportInterface $originalTransport,
+        protected MailLogRepository $mailLogRepository,
+        protected PersistenceManager $persistenceManager,
+        protected MailLog $mailLog,
+    ) {
     }
 
     #[Override]
@@ -40,25 +44,20 @@ class LoggingTransport implements TransportInterface, Stringable
     {
         $this->fixTcaIfNotPresentIsUsedInInstallTool();
 
-        $mailLogRepository = GeneralUtility::makeInstance(MailLogRepository::class);
-
         // write mail to log before send
-        $mailLog = GeneralUtility::makeInstance(MailLog::class);
-        $this->assignMailLog($mailLog, $message);
-        $mailLogRepository->add($mailLog);
-        GeneralUtility::makeInstance(PersistenceManager::class)->persistAll();
-
+        $this->assignMailLog($message);
+        $this->mailLogRepository->add($this->mailLog);
+        $this->persistenceManager->persistAll();
 
         $sendResult = $this->originalSend($message, $envelope);
 
         // write result to log after send
-        $this->assignMailLog($mailLog, $message);
-        $mailLog->setResult($sendResult->result);
-        $mailLog->setStatus($sendResult->status->value);
-        $mailLog->setDebug($sendResult->getDebugMessage());
+        $this->mailLog->setResult($sendResult->result);
+        $this->mailLog->setStatus($sendResult->status->value);
+        $this->mailLog->setDebug($sendResult->getDebugMessage());
 
-        $mailLogRepository->update($mailLog);
-        GeneralUtility::makeInstance(PersistenceManager::class)->persistAll();
+        $this->mailLogRepository->update($this->mailLog);
+        $this->persistenceManager->persistAll();
 
         if ($sendResult->throwable) {
             throw $sendResult->throwable;
@@ -107,22 +106,22 @@ class LoggingTransport implements TransportInterface, Stringable
         return $this->originalTransport->__toString();
     }
 
-    protected function assignMailLog(MailLog $mailLog, RawMessage $message): void
+    protected function assignMailLog(RawMessage $message): void
     {
         if (!$message instanceof Email) {
             return;
         }
 
         $messageBody = $message->getBody();
-        $mailLog->setMessage($this->getBodyAsHtml($messageBody));
-        $mailLog->setSubject($message->getSubject());
-        $mailLog->setMailFrom($this->addressesToString($message->getFrom()));
-        $mailLog->setMailTo($this->addressesToString($message->getTo()));
-        $mailLog->setMailCopy($this->addressesToString($message->getCc()));
-        $mailLog->setMailBlindCopy($this->addressesToString($message->getBcc()));
-        $mailLog->setHeaders($message->getHeaders()->toString());
+        $this->mailLog->setMessage($this->getBodyAsHtml($messageBody));
+        $this->mailLog->setSubject($message->getSubject());
+        $this->mailLog->setMailFrom($this->addressesToString($message->getFrom()));
+        $this->mailLog->setMailTo($this->addressesToString($message->getTo()));
+        $this->mailLog->setMailCopy($this->addressesToString($message->getCc()));
+        $this->mailLog->setMailBlindCopy($this->addressesToString($message->getBcc()));
+        $this->mailLog->setHeaders($message->getHeaders()->toString());
         if ($message instanceof TemplateBasedMailMessage) {
-            $mailLog->setTypoScriptKey($message->getTypoScriptKey());
+            $this->mailLog->setTypoScriptKey($message->getTypoScriptKey());
         }
     }
 
