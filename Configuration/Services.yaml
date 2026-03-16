@@ -16,7 +16,6 @@ services:
 
   Pluswerk\MailLogger\Logging\MailerExtender:
     arguments:
-      $loggingTransportFactory: '@Pluswerk\MailLogger\Logging\LoggingTransportFactory'
       $transport: null
       $eventDispatcher: null
 

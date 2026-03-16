@@ -8,18 +8,22 @@ use Override;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use TYPO3\CMS\Core\Mail\Mailer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Extends the core Mailer to grab and log all outgoing mails.
  */
 class MailerExtender extends Mailer
 {
+    protected LoggingTransportFactory $loggingTransportFactory;
+
     public function __construct(
-        protected LoggingTransportFactory $loggingTransportFactory,
         ?TransportInterface $transport = null,
-        ?EventDispatcherInterface $eventDispatcher = null,
+        ?EventDispatcherInterface $eventDispatcher = null
     ) {
         parent::__construct($transport, $eventDispatcher);
+
+        $this->loggingTransportFactory = GeneralUtility::makeInstance(LoggingTransportFactory::class);
         $this->transport = $this->loggingTransportFactory->create($this->transport);
     }
 
