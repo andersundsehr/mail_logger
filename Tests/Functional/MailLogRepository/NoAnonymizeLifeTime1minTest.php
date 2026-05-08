@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pluswerk\MailLogger\Tests\Functional\MailLogRepository;
 
 use Override;
