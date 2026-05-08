@@ -1,37 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="50 110 233 233" style="enable-background:new 50 110 233 233;" xml:space="preserve">
-  <style type="text/css">
-    .envelope-base{fill:#FFE633;}
-    .envelope-flap{fill:#FFE633;}
-    .envelope-shadow{fill:#BCA869;opacity:0.5;}
-    .document{fill:#FFFFFF;}
-    .corner-fold{fill:#B3D4FC;opacity:0.8;}
-    .log-line{fill:#5A7CA6;}
-  </style>
-  <!-- Define clipPath for envelope-shadow -->
-  <clipPath id="envelopeBaseClip">
-    <rect x="50" y="166.5" width="233" height="120" rx="20" />
-  </clipPath>
-  <!-- Define clipPath for envelope-shadow shape -->
-  <clipPath id="envelopeShadowClip">
-    <polygon points="166.5,286.5 50,166.5 283,166.5" />
-  </clipPath>
-  <!-- Envelope base -->
-  <rect class="envelope-base" x="50" y="166.5" width="233" height="120" rx="20"/>
-  <!-- Envelope shadow for depth, clipped to envelope base -->
-  <polygon class="envelope-shadow" points="166.5,286.5 50,166.5 283,166.5" clip-path="url(#envelopeBaseClip)"/>
-  <!-- Envelope flap at the top -->
-  <polygon class="envelope-flap" points="166.5,186.5 60,166.5 273,166.5"  clip-path="url(#envelopeBaseClip)"/>
-  <!-- Document (log) overlay, clipped to envelope-shadow shape -->
-  <rect class="document" x="90" y="196.5" width="153" height="80" rx="8" clip-path="url(#envelopeShadowClip)"/>
-  <!-- Document corner fold, clipped to document shape -->
-  <clipPath id="documentClip">
-    <rect x="90" y="196.5" width="153" height="80" rx="8" clip-path="url(#envelopeShadowClip)"/>
-  </clipPath>
-  <polygon class="corner-fold" points="225,196.5 243,196.5 243,214.5" clip-path="url(#documentClip)"/>
-  <!-- Log lines -->
-  <rect class="log-line" x="105" y="211.5" width="80" height="7" rx="2" clip-path="url(#envelopeShadowClip)"/>
-  <rect class="log-line" x="105" y="226.5" width="65" height="7" rx="2" clip-path="url(#envelopeShadowClip)"/>
-  <rect class="log-line" x="105" y="241.5" width="70" height="7" rx="2" clip-path="url(#envelopeShadowClip)"/>
-  <rect class="log-line" x="105" y="256.5" width="60" height="7" rx="2" clip-path="url(#envelopeShadowClip)"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 233 233" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Maillogger">
+        <g id="Hell">
+            <g transform="matrix(0.25549,0,0,0.25549,-6.135016,237.201581)">
+                <path d="M160,-160C138,-160 119.167,-167.833 103.5,-183.5C87.833,-199.167 80,-218 80,-240L80,-720C80,-742 87.833,-760.833 103.5,-776.5C119.167,-792.167 138,-800 160,-800L800,-800C822,-800 840.833,-792.167 856.5,-776.5C872.167,-760.833 880,-742 880,-720L880,-240C880,-218 872.167,-199.167 856.5,-183.5C840.833,-167.833 822,-160 800,-160L160,-160ZM480,-440L160,-640L160,-240L800,-240L800,-640L480,-440ZM480,-520L800,-720L160,-720L480,-520ZM160,-240L160,-720L160,-240Z" style="fill:rgb(255,240,0);fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(25.68627,0,0,25.68627,-378.988353,10.419541)">
+                <circle cx="22.054" cy="6.108" r="1.378" style="fill:rgb(255,0,224);"/>
+            </g>
+        </g>
+    </g>
 </svg>
