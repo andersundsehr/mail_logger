@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Pluswerk\MailLogger\Logging\MailerExtender;
 use TYPO3\CMS\Core\Mail\Mailer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
