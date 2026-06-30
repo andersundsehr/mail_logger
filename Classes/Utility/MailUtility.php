@@ -7,6 +7,7 @@ namespace Pluswerk\MailLogger\Utility;
 use Exception;
 use Pluswerk\MailLogger\Domain\Model\TemplateBasedMailMessage;
 use Pluswerk\MailLogger\Domain\Repository\MailTemplateRepository;
+use Pluswerk\MailLogger\Service\MailTemplateContentTransformer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class MailUtility
@@ -29,6 +30,8 @@ class MailUtility
             throw new Exception('No "MailTemplate" was found for key "' . $key . '". Please check your database records!', 6640694639);
         }
 
+        $mailTemplate = GeneralUtility::makeInstance(MailTemplateContentTransformer::class)->transformMailTemplate($mailTemplate);
+
         return $mail->setMailTemplate($mailTemplate, true, $viewParameters);
     }
 
@@ -49,6 +52,8 @@ class MailUtility
         if (!$mailTemplate) {
             throw new Exception('No "MailTemplate" was found for uid "' . $mailTemplateId . '". Please check your database records!', 6976725035);
         }
+
+        $mailTemplate = GeneralUtility::makeInstance(MailTemplateContentTransformer::class)->transformMailTemplate($mailTemplate);
 
         return $mail->setMailTemplate($mailTemplate, true, $viewParameters);
     }

@@ -38,6 +38,9 @@
     <env name="TYPO3_PATH_WEB" value=".Build/Web"/>
   </php>
   <testsuites>
+    <testsuite name="Unit">
+      <directory>Tests/Unit/</directory>
+    </testsuite>
     <testsuite name="Functional">
       <directory>Tests/Functional/</directory>
       <exclude>Tests/Functional/MailLogRepository/AbstractMailLogRepositoryTest.php</exclude>
