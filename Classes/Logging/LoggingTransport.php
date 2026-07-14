@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\Logging;
 
 use Override;
-use Stringable;
 use Throwable;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
 use Pluswerk\MailLogger\Domain\Model\TemplateBasedMailMessage;
@@ -17,7 +16,6 @@ use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\NullTransport;
 use Symfony\Component\Mailer\Transport\SendmailTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Symfony\Component\Mailer\Transport\Transports;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\AbstractMultipartPart;
@@ -27,15 +25,15 @@ use Symfony\Component\Mime\RawMessage;
 use TYPO3\CMS\Core\Mail\DelayedTransportInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class LoggingTransport implements TransportInterface
 {
+    protected MailLog $mailLog;
+
     public function __construct(
         protected TransportInterface $originalTransport,
         protected MailLogRepository $mailLogRepository,
         protected PersistenceManager $persistenceManager,
-        protected MailLog $mailLog,
     ) {
     }
 
@@ -45,6 +43,7 @@ class LoggingTransport implements TransportInterface
         $this->fixTcaIfNotPresentIsUsedInInstallTool();
 
         // write mail to log before send
+        $this->mailLog = GeneralUtility::makeInstance(MailLog::class);
         $this->assignMailLog($message);
         $this->mailLogRepository->add($this->mailLog);
         $this->persistenceManager->persistAll();

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Utility;
 
-use Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager;
@@ -46,7 +48,7 @@ class ConfigurationUtility
             $reflection = new ReflectionMethod($this->backendConfigurationManager, 'getTypoScriptSetup');
             if ($reflection->getNumberOfParameters() > 0) {
                 // v13: pass request parameter
-                $request = $GLOBALS['TYPO3_REQUEST'] ?? throw new Exception('No $GLOBALS[\'TYPO3_REQUEST\'] found', 1688138054);
+                $request = $this->getRequest();
                 /** @phpstan-ignore-next-line arguments.count - v13 compatibility */
                 $fullTypoScript = $this->backendConfigurationManager->getTypoScriptSetup($request);
             } else {
@@ -63,5 +65,16 @@ class ConfigurationUtility
         }
 
         return self::$currentModuleConfiguration[$key];
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface) {
+            return $GLOBALS['TYPO3_REQUEST'];
+        }
+
+        return GeneralUtility::makeInstance(ServerRequestFactory::class)
+            ->createServerRequest('GET', 'https://localhost/')
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_BE);
     }
 }

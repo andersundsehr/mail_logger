@@ -5,6 +5,7 @@
 namespace Pluswerk\MailLogger\Tests\Functional\MailLogRepository;
 
 use Override;
+use PHPUnit\Framework\Attributes\Test;
 use Pluswerk\MailLogger\Service\CleanupService;
 use ReflectionObject;
 use DateTime;
@@ -12,6 +13,7 @@ use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Extbase\Persistence\Generic\Exception\NotImplementedException;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
 use Pluswerk\MailLogger\Domain\Repository\MailLogRepository;
@@ -33,17 +35,16 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
     #[Override]
     protected function setUp(): void
     {
+        putenv('typo3DatabaseDriver=pdo_sqlite');
         parent::setUp();
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
-        // TYPO3 request needed for ConfigurationManager to work. fake it as backend request here
-        $GLOBALS['TYPO3_REQUEST'] = (new ServerRequest())->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_BE);
     }
 
     public function testInitializeObject(): void
     {
         $mailLogRepository = GeneralUtility::makeInstance(MailLogRepository::class);
 
-        $this->assertMatchesJsonSnapshot(
+        self::assertMatchesJsonSnapshot(
             json_encode(
                 [
                     'lifetime' => $mailLogRepository->getLifetime(),
@@ -60,7 +61,7 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
     {
         $mailLog = $this->createAndSaveMailLog(558);
 
-        $this->assertModelSnapshot($mailLog);
+        self::assertModelSnapshot($mailLog);
     }
 
     public function testUpdate(): void
@@ -69,7 +70,7 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
 
         $mailLog = $this->updatingMailLog($mailLog);
 
-        $this->assertModelSnapshot($mailLog);
+        self::assertModelSnapshot($mailLog);
     }
 
     public function testUpdateWithDelayAnonymize(): void
@@ -80,9 +81,16 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
 
         $mailLog = $this->updatingMailLog($mailLog);
 
-        $this->assertModelSnapshot($mailLog);
+        self::assertModelSnapshot($mailLog);
     }
 
+    /**
+     * Assures old entries get deleted.
+     *
+     * @throws NotImplementedException
+     * @throws \JsonException
+     */
+    #[Test]
     public function testCleanupDatabase(): void
     {
         $this->createAndSaveMailLog(789);
@@ -96,9 +104,10 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
 
         $this->cleanupDatabasePart($persistenceManager);
 
-        /** @var MailLog $mailLog */
-        $mailLog = $mailLogRepository->findAll()->getFirst();
-        $this->assertModelSnapshot($mailLog);
+        $result = $mailLogRepository->findAll();
+        self::assertInstanceOf(QueryResultInterface::class, $result);
+        $mailLog = $result->getFirst();
+        self::assertModelSnapshot($mailLog);
     }
 
     public function testAnonymizeAll(): void
@@ -119,7 +128,7 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
         /** @var MailLog $mailLog */
         $mailLog = $mailLogRepository->findAll()->getFirst();
 
-        $this->assertModelSnapshot($mailLog);
+        self::assertModelSnapshot($mailLog);
     }
 
     protected function getNewMailLog(int $seed): MailLog
@@ -206,7 +215,7 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
             ksort($data);
         }
 
-        $this->assertMatchesJsonSnapshot(json_encode($data, JSON_THROW_ON_ERROR));
+        self::assertMatchesJsonSnapshot(json_encode($data, JSON_THROW_ON_ERROR));
     }
 
     /**

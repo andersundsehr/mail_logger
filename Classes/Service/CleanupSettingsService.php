@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Service;
 
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\Exception\NoServerRequestGivenException;
 
 class CleanupSettingsService
 {
@@ -63,11 +68,8 @@ class CleanupSettingsService
             return;
         }
 
-        try {
-            $fullSettings = $this->configurationManager->getConfiguration(
-                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
-            );
-        } catch (RuntimeException) {
+        $fullSettings = $this->getFullTypoScriptSettings();
+        if ($fullSettings === null) {
             // Some rare cases have no server request available yet.
             // Keep defaults and mark as not loaded so callers can check via isLoaded().
             return;
@@ -80,5 +82,38 @@ class CleanupSettingsService
         $this->anonymizeAfter = $settings['cleanup.']['anonymizeAfter'] ?? self::DEFAULT_ANONYMIZE_AFTER;
 
         $this->loaded = true;
+    }
+
+    /**
+     * @return array<array-key, mixed>|null
+     */
+    private function getFullTypoScriptSettings(): ?array
+    {
+        try {
+            return $this->configurationManager->getConfiguration(
+                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+            );
+        } catch (NoServerRequestGivenException) {
+            $this->configurationManager->setRequest($this->createBackendRequest());
+        } catch (RuntimeException) {
+            return null;
+        }
+
+        try {
+            return $this->configurationManager->getConfiguration(
+                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+            );
+        } catch (NoServerRequestGivenException) {
+            return null;
+        } catch (RuntimeException) {
+            return null;
+        }
+    }
+
+    private function createBackendRequest(): ServerRequestInterface
+    {
+        return GeneralUtility::makeInstance(ServerRequestFactory::class)
+            ->createServerRequest('GET', 'https://localhost/')
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_BE);
     }
 }

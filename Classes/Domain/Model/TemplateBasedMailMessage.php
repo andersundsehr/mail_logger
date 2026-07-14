@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Domain\Model;
 
-use Override;
 use Exception;
+use Override;
 use Pluswerk\MailLogger\Utility\ConfigurationUtility;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Mime\Crypto\DkimSigner;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Fluid\View\FluidViewAdapter;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-
-use function array_filter;
 
 class TemplateBasedMailMessage extends MailMessage
 {
@@ -25,9 +29,33 @@ class TemplateBasedMailMessage extends MailMessage
 
     protected string $typoScriptKey = '';
 
+    protected ?string $messageTemplatePathAndFilename = null;
+
+    /**
+     * @var array<int|string, string>
+     */
+    protected array $partialRootPaths = [];
+
+    /**
+     * @var array<int|string, string>
+     */
+    protected array $layoutRootPaths = [];
+
+    /**
+     * @var array<array-key, mixed>
+     */
+    protected array $templateSettings = [];
+
+    protected string $subjectTemplateSource = '';
+
+    protected string $messageTemplateSource = '';
+
+    protected ?StandaloneView $legacyMessageView = null;
+
+    protected ?StandaloneView $legacySubjectView = null;
+
     public function __construct(
-        protected StandaloneView $messageView,
-        protected StandaloneView $subjectView
+        protected readonly ViewFactoryInterface $viewFactory,
     ) {
         parent::__construct();
     }
@@ -55,25 +83,43 @@ class TemplateBasedMailMessage extends MailMessage
         return $this;
     }
 
+    /**
+     * @deprecated Will be removed in a future version. TemplateBasedMailMessage no longer uses StandaloneView internally.
+     */
     public function getMessageView(): StandaloneView
     {
-        return $this->messageView;
+        $this->triggerStandaloneViewDeprecation(__METHOD__);
+        $this->legacyMessageView ??= GeneralUtility::makeInstance(StandaloneView::class);
+        return $this->legacyMessageView;
     }
 
+    /**
+     * @deprecated Will be removed in a future version. Configure the mail template paths instead of injecting StandaloneView.
+     */
     public function setMessageView(StandaloneView $messageView): self
     {
-        $this->messageView = $messageView;
+        $this->triggerStandaloneViewDeprecation(__METHOD__);
+        $this->legacyMessageView = $messageView;
         return $this;
     }
 
+    /**
+     * @deprecated Will be removed in a future version. TemplateBasedMailMessage no longer uses StandaloneView internally.
+     */
     public function getSubjectView(): StandaloneView
     {
-        return $this->subjectView;
+        $this->triggerStandaloneViewDeprecation(__METHOD__);
+        $this->legacySubjectView ??= GeneralUtility::makeInstance(StandaloneView::class);
+        return $this->legacySubjectView;
     }
 
+    /**
+     * @deprecated Will be removed in a future version. Set the subject template source through the mail template configuration.
+     */
     public function setSubjectView(StandaloneView $subjectView): self
     {
-        $this->subjectView = $subjectView;
+        $this->triggerStandaloneViewDeprecation(__METHOD__);
+        $this->legacySubjectView = $subjectView;
         return $this;
     }
 
@@ -115,14 +161,13 @@ class TemplateBasedMailMessage extends MailMessage
     public function send(): bool
     {
         try {
-            $body = $this->renderView($this->messageView);
-            $this->html($body);
+            $this->html($this->renderMessageBody());
         } catch (Exception $exception) {
             throw new Exception('Error while setting mail body template: ' . $exception->getMessage(), 1449133006, $exception);
         }
 
         try {
-            $this->setSubject($this->renderView($this->subjectView));
+            $this->setSubject($this->renderSubject());
         } catch (Exception $exception) {
             throw new Exception('Error while setting mail subject template: ' . $exception->getMessage(), 1449133007, $exception);
         }
@@ -137,7 +182,6 @@ class TemplateBasedMailMessage extends MailMessage
         if (isset($settings['dkim']) && isset($settings['dkim'][$this->mailTemplate->getDkimKey()])) {
             $conf = $settings['dkim'][$this->mailTemplate->getDkimKey()];
 
-            // needs testing:
             $signer = new DkimSigner($this->formPrivateKey($conf['key']), $conf['domain'], $conf['selector'], [
                 'headers_to_ignore' => [
                     'Return-Path',
@@ -148,7 +192,6 @@ class TemplateBasedMailMessage extends MailMessage
             $this->setBody($signedMail->getBody());
         }
     }
-
 
     private function formPrivateKey(string $key): string
     {
@@ -166,7 +209,6 @@ class TemplateBasedMailMessage extends MailMessage
             $this->assignDefaultsFromTypoScript($values['typoScriptKey'], $this->mailTemplate->getTemplatePathKey());
         }
 
-        // set From
         $fromAddress = $this->getRenderedValue($values['mailFromAddress'] ?? '');
         if ($fromAddress !== '') {
             $fromName = $this->getRenderedValue($values['mailFromName'] ?? '');
@@ -174,7 +216,6 @@ class TemplateBasedMailMessage extends MailMessage
             $this->setFrom($this->cleanUpMailAddressesAndNames([$fromAddress => $fromName]));
         }
 
-        // set To
         $toAddresses = GeneralUtility::trimExplode(',', $this->getRenderedValue($values['mailToAddresses'] ?? ''), true);
         if ($toAddresses !== []) {
             $toNames = GeneralUtility::trimExplode(',', $this->getRenderedValue($values['mailToNames'] ?? ''));
@@ -186,7 +227,6 @@ class TemplateBasedMailMessage extends MailMessage
             $this->setTo($this->cleanUpMailAddressesAndNames($combinedTo));
         }
 
-        // set CC and BCC
         if (!empty($values['mailCopyAddresses'])) {
             $this->setCc(GeneralUtility::trimExplode(',', $this->getRenderedValue($values['mailCopyAddresses']), true));
         }
@@ -197,19 +237,16 @@ class TemplateBasedMailMessage extends MailMessage
 
         $this->assignMailTemplatePaths($values);
 
-        // set subject and message
         if (!empty($values['subject'])) {
-            $this->subjectView->setTemplateSource($values['subject']);
+            $this->subjectTemplateSource = $values['subject'];
+            if ($this->legacySubjectView instanceof StandaloneView) {
+                $this->legacySubjectView->setTemplateSource($values['subject']);
+            }
         }
 
         if (!empty($values['message'])) {
-            $mailView = GeneralUtility::makeInstance(StandaloneView::class);
-            $mailView->setTemplateSource($values['message']);
-            $mailView->assignMultiple($this->viewParameters);
-            $this->messageView->assign('message', $mailView->render());
+            $this->messageTemplateSource = $values['message'];
         }
-
-        $this->messageView->assign('mailTemplate', $this->mailTemplate);
     }
 
     /**
@@ -228,27 +265,70 @@ class TemplateBasedMailMessage extends MailMessage
         return $addressesAndNames;
     }
 
-    /**
-     * Short method to render a standalone fluid template
-     */
     private function getRenderedValue(string $value): string
     {
-        // Check if the string is not empty and contains any Fluid stuff
         if ($value !== '' && (str_contains($value, '{') || str_contains($value, '<'))) {
-            /** @var StandaloneView $valueView */
-            $valueView = GeneralUtility::makeInstance(StandaloneView::class);
-            $valueView->setTemplateSource($value);
-            $value = $this->renderView($valueView);
+            $value = $this->renderTemplateSource($value, $this->viewParameters);
         }
 
         return $value;
     }
 
-    /**
-     * Render view with all parameters
-     */
-    private function renderView(StandaloneView $view): string
+    private function renderMessageBody(): string
     {
+        if ($this->legacyMessageView instanceof StandaloneView) {
+            $this->legacyMessageView->assign('mailTemplate', $this->mailTemplate);
+            return $this->renderLegacyView($this->legacyMessageView);
+        }
+
+        $variables = $this->viewParameters;
+        $variables['mailTemplate'] = $this->mailTemplate;
+        if ($this->messageTemplateSource !== '') {
+            $variables['message'] = $this->renderTemplateSource($this->messageTemplateSource, $this->viewParameters);
+        }
+
+        $view = $this->viewFactory->create(new ViewFactoryData(
+            partialRootPaths: $this->partialRootPaths,
+            layoutRootPaths: $this->layoutRootPaths,
+            templatePathAndFilename: $this->messageTemplatePathAndFilename,
+            request: $this->getRequest(),
+        ));
+        $view->assignMultiple($variables);
+        if ($this->templateSettings !== []) {
+            $view->assign('settings', $this->templateSettings);
+        }
+
+        return $view->render();
+    }
+
+    private function renderSubject(): string
+    {
+        if ($this->legacySubjectView instanceof StandaloneView) {
+            return $this->renderLegacyView($this->legacySubjectView);
+        }
+
+        return $this->subjectTemplateSource !== ''
+            ? $this->renderTemplateSource($this->subjectTemplateSource, $this->viewParameters)
+            : $this->getSubject();
+    }
+
+    /**
+     * @param array<array-key, mixed> $variables
+     */
+    private function renderTemplateSource(string $templateSource, array $variables): string
+    {
+        $view = $this->viewFactory->create(new ViewFactoryData(request: $this->getRequest()));
+        if (!$view instanceof FluidViewAdapter) {
+            throw new Exception('TemplateBasedMailMessage requires a Fluid view adapter.', 1720965301);
+        }
+
+        $view->getRenderingContext()->getTemplatePaths()->setTemplateSource($templateSource);
+        return $view->assignMultiple($variables)->render();
+    }
+
+    private function renderLegacyView(StandaloneView $view): string
+    {
+        $view->setRequest($this->getRequest());
         return $view->assignMultiple($this->viewParameters)->render();
     }
 
@@ -257,33 +337,65 @@ class TemplateBasedMailMessage extends MailMessage
      */
     private function assignMailTemplatePaths(array $values): void
     {
-        if (!$this->messageView->getPartialRootPaths()) {
-            $this->messageView->setPartialRootPaths(
-                array_filter(
-                    [
-                        $values['defaultTemplatePaths']['partialRootPaths'],
-                        $values['templatePaths']['partialRootPaths'] ?? [],
-                    ]
-                )
+        if ($this->messageTemplatePathAndFilename === null) {
+            $this->partialRootPaths = $this->normalizeRootPaths(
+                $values['defaultTemplatePaths']['partialRootPaths'] ?? [],
+                $values['templatePaths']['partialRootPaths'] ?? [],
             );
-
-            $this->messageView->setTemplatePathAndFilename(
-                GeneralUtility::getFileAbsFileName($values['templatePaths']['templatePath'] ?: $values['defaultTemplatePaths']['templatePath'])
+            $this->layoutRootPaths = $this->normalizeRootPaths(
+                $values['defaultTemplatePaths']['layoutRootPaths'] ?? [],
+                $values['templatePaths']['layoutRootPaths'] ?? [],
             );
+            $templatePath = $values['templatePaths']['templatePath'] ?: $values['defaultTemplatePaths']['templatePath'];
+            $this->messageTemplatePathAndFilename = GeneralUtility::getFileAbsFileName($templatePath);
+            $this->templateSettings = is_array($values['templatePaths']['settings'] ?? null)
+                ? $values['templatePaths']['settings']
+                : [];
+        }
 
-            $this->messageView->setLayoutRootPaths(
-                array_filter(
-                    [
-                        $values['defaultTemplatePaths']['layoutRootPaths'],
-                        $values['templatePaths']['layoutRootPaths'] ?? [],
-                    ]
-                )
-            );
-
-            if (isset($values['templatePaths']['settings']) && !empty($values['templatePaths']['settings'])) {
-                $this->messageView->assignMultiple(['settings' => $values['templatePaths']['settings']]);
+        if ($this->legacyMessageView instanceof StandaloneView && !$this->legacyMessageView->getPartialRootPaths()) {
+            $this->legacyMessageView->setPartialRootPaths($this->partialRootPaths);
+            $this->legacyMessageView->setTemplatePathAndFilename($this->messageTemplatePathAndFilename);
+            $this->legacyMessageView->setLayoutRootPaths($this->layoutRootPaths);
+            if ($this->templateSettings !== []) {
+                $this->legacyMessageView->assignMultiple(['settings' => $this->templateSettings]);
             }
         }
+    }
+
+    /**
+     * @return array<int|string, string>
+     */
+    private function normalizeRootPaths(mixed ...$paths): array
+    {
+        $normalizedPaths = [];
+        foreach ($paths as $path) {
+            if (is_string($path) && $path !== '') {
+                $normalizedPaths[] = $path;
+                continue;
+            }
+            if (!is_array($path)) {
+                continue;
+            }
+            foreach ($path as $key => $value) {
+                if (is_string($value) && $value !== '') {
+                    $normalizedPaths[$key] = $value;
+                }
+            }
+        }
+
+        return $normalizedPaths;
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface) {
+            return $GLOBALS['TYPO3_REQUEST'];
+        }
+
+        return GeneralUtility::makeInstance(ServerRequestFactory::class)
+            ->createServerRequest('GET', 'https://localhost/')
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_BE);
     }
 
     public function getTypoScriptKey(): string
@@ -294,5 +406,14 @@ class TemplateBasedMailMessage extends MailMessage
     private function setTypoScriptKey(string $typoScriptKey): void
     {
         $this->typoScriptKey = $typoScriptKey;
+    }
+
+    private function triggerStandaloneViewDeprecation(string $method): void
+    {
+        trigger_error(
+            $method . ' is deprecated and will be removed in a future version. '
+            . 'TemplateBasedMailMessage renders Fluid templates through TYPO3 ViewFactoryInterface now.',
+            E_USER_DEPRECATED
+        );
     }
 }
