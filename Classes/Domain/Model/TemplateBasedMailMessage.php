@@ -67,7 +67,6 @@ class TemplateBasedMailMessage extends MailMessage
 
     /**
      * @param array<array-key, mixed> $viewParameters This is necessary if you use Fluid for your mail fields
-     * @return $this
      */
     public function setMailTemplate(MailTemplate $mailTemplate, bool $assignMailTemplate = true, array $viewParameters = []): self
     {
@@ -268,7 +267,7 @@ class TemplateBasedMailMessage extends MailMessage
     private function getRenderedValue(string $value): string
     {
         if ($value !== '' && (str_contains($value, '{') || str_contains($value, '<'))) {
-            $value = $this->renderTemplateSource($value, $this->viewParameters);
+            return $this->renderTemplateSource($value, $this->viewParameters);
         }
 
         return $value;
@@ -374,9 +373,11 @@ class TemplateBasedMailMessage extends MailMessage
                 $normalizedPaths[] = $path;
                 continue;
             }
+
             if (!is_array($path)) {
                 continue;
             }
+
             foreach ($path as $key => $value) {
                 if (is_string($value) && $value !== '') {
                     $normalizedPaths[$key] = $value;

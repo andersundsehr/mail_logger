@@ -69,11 +69,6 @@ class CleanupSettingsService
         }
 
         $fullSettings = $this->getFullTypoScriptSettings();
-        if ($fullSettings === null) {
-            // Some rare cases have no server request available yet.
-            // Keep defaults and mark as not loaded so callers can check via isLoaded().
-            return;
-        }
 
         $settings = $fullSettings['module.']['tx_maillogger.']['settings.'] ?? [];
 
@@ -85,9 +80,9 @@ class CleanupSettingsService
     }
 
     /**
-     * @return array<array-key, mixed>|null
+     * @return mixed[]
      */
-    private function getFullTypoScriptSettings(): ?array
+    private function getFullTypoScriptSettings(): array
     {
         try {
             return $this->configurationManager->getConfiguration(
@@ -95,19 +90,11 @@ class CleanupSettingsService
             );
         } catch (NoServerRequestGivenException) {
             $this->configurationManager->setRequest($this->createBackendRequest());
-        } catch (RuntimeException) {
-            return null;
         }
 
-        try {
-            return $this->configurationManager->getConfiguration(
-                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
-            );
-        } catch (NoServerRequestGivenException) {
-            return null;
-        } catch (RuntimeException) {
-            return null;
-        }
+        return $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+        );
     }
 
     private function createBackendRequest(): ServerRequestInterface

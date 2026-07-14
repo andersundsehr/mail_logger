@@ -4,6 +4,7 @@
 
 namespace Pluswerk\MailLogger\Tests\Functional\MailLogRepository;
 
+use JsonException;
 use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Pluswerk\MailLogger\Service\CleanupService;
@@ -88,7 +89,7 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
      * Assures old entries get deleted.
      *
      * @throws NotImplementedException
-     * @throws \JsonException
+     * @throws JsonException
      */
     #[Test]
     public function testCleanupDatabase(): void
