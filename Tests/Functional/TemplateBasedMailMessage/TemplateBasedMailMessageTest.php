@@ -80,7 +80,7 @@ final class TemplateBasedMailMessageTest extends FunctionalTestCase
         $mail->getSubjectView();
 
         $mailTemplate = GeneralUtility::makeInstance(MailTemplateRepository::class)
-            ->findOneByTypoScriptKeyAndLanguage('functionalMail', null);
+            ->findOneByTypoScriptKeyAndLanguage('functionalMail');
         self::assertNotNull($mailTemplate);
         $mail->setMailTemplate($mailTemplate, true, ['name' => 'Ada', 'color' => 'blue']);
 
