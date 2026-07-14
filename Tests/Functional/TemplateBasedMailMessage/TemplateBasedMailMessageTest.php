@@ -6,7 +6,11 @@ namespace Pluswerk\MailLogger\Tests\Functional\TemplateBasedMailMessage;
 
 use Override;
 use Pluswerk\MailLogger\Dto\MailStatus;
+use Pluswerk\MailLogger\Domain\Model\TemplateBasedMailMessage;
+use Pluswerk\MailLogger\Domain\Repository\MailTemplateRepository;
 use Pluswerk\MailLogger\Utility\MailUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 final class TemplateBasedMailMessageTest extends FunctionalTestCase
@@ -68,6 +72,34 @@ final class TemplateBasedMailMessageTest extends FunctionalTestCase
         self::assertStringContainsString('<p>Body with manually assigned subject for Ada</p>', $mailLog['message']);
         self::assertSame('Email Nulled (NullTransport)', $mailLog['result']);
         self::assertSame(MailStatus::NOT_SENT->value, (int)$mailLog['status']);
+    }
+
+    public function testConfiguredSubjectIsRenderedThroughLegacySubjectView(): void
+    {
+        $mail = GeneralUtility::makeInstance(TemplateBasedMailMessage::class);
+        $mail->getSubjectView();
+
+        $mailTemplate = GeneralUtility::makeInstance(MailTemplateRepository::class)
+            ->findOneByTypoScriptKeyAndLanguage('functionalMail', null);
+        self::assertNotNull($mailTemplate);
+        $mail->setMailTemplate($mailTemplate, true, ['name' => 'Ada', 'color' => 'blue']);
+
+        self::assertTrue($mail->send());
+
+        self::assertSame('Functional subject for Ada', $this->getSingleMailLog()['subject']);
+    }
+
+    public function testInjectedLegacySubjectViewOverridesConfiguredSubject(): void
+    {
+        $subjectView = GeneralUtility::makeInstance(StandaloneView::class);
+        $subjectView->getRenderingContext()->getTemplatePaths()->setTemplateSource('Legacy subject for {name}');
+
+        $mail = MailUtility::getMailByKey('functionalMail', null, ['name' => 'Ada', 'color' => 'blue']);
+        $mail->setSubjectView($subjectView);
+
+        self::assertTrue($mail->send());
+
+        self::assertSame('Legacy subject for Ada', $this->getSingleMailLog()['subject']);
     }
 
     public function testEachSentMailCreatesItsOwnLogEntry(): void

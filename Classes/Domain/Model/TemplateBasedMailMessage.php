@@ -239,7 +239,7 @@ class TemplateBasedMailMessage extends MailMessage
         if (!empty($values['subject'])) {
             $this->subjectTemplateSource = $values['subject'];
             if ($this->legacySubjectView instanceof StandaloneView) {
-                $this->legacySubjectView->setTemplateSource($values['subject']);
+                $this->legacySubjectView->getRenderingContext()->getTemplatePaths()->setTemplateSource($values['subject']);
             }
         }
 
@@ -327,7 +327,7 @@ class TemplateBasedMailMessage extends MailMessage
 
     private function renderLegacyView(StandaloneView $view): string
     {
-        $view->setRequest($this->getRequest());
+        $view->getRenderingContext()->setAttribute(ServerRequestInterface::class, $this->getRequest());
         return $view->assignMultiple($this->viewParameters)->render();
     }
 
@@ -352,10 +352,10 @@ class TemplateBasedMailMessage extends MailMessage
                 : [];
         }
 
-        if ($this->legacyMessageView instanceof StandaloneView && !$this->legacyMessageView->getPartialRootPaths()) {
-            $this->legacyMessageView->setPartialRootPaths($this->partialRootPaths);
-            $this->legacyMessageView->setTemplatePathAndFilename($this->messageTemplatePathAndFilename);
-            $this->legacyMessageView->setLayoutRootPaths($this->layoutRootPaths);
+        if ($this->legacyMessageView instanceof StandaloneView && !$this->legacyMessageView->getRenderingContext()->getTemplatePaths()->getPartialRootPaths()) {
+            $this->legacyMessageView->getRenderingContext()->getTemplatePaths()->setPartialRootPaths($this->partialRootPaths);
+            $this->legacyMessageView->getRenderingContext()->getTemplatePaths()->setTemplatePathAndFilename($this->messageTemplatePathAndFilename);
+            $this->legacyMessageView->getRenderingContext()->getTemplatePaths()->setLayoutRootPaths($this->layoutRootPaths);
             if ($this->templateSettings !== []) {
                 $this->legacyMessageView->assignMultiple(['settings' => $this->templateSettings]);
             }
