@@ -12,19 +12,18 @@
   "require": {
     "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
     "composer-runtime-api": "^2",
-    "typo3/cms-core": "^12.4.0 || ^13.4.0",
-    "typo3/cms-extbase": "^12.4.0 || ^13.4.0"
+    "typo3/cms-core": "^13.4.0",
+    "typo3/cms-extbase": "^13.4.0"
   },
   "require-dev": {
     "ext-json": "*",
     "andersundsehr/no-ci": "^1.1",
-    "helhum/typo3-console": "^8.2.3",
-    "phpunit/phpunit": "^10.5.59",
-    "pluswerk/grumphp-config": "^7.2.0 || ^10.2.2",
-    "saschaegerer/phpstan-typo3": "^1.10.2 || ^2.1.1",
-    "spatie/phpunit-snapshot-assertions": "^5.2.3",
-    "ssch/typo3-rector": "^2.15.2 || ^3.9.0",
-    "typo3/testing-framework": "^8.3.1 || ^9.2.0"
+    "helhum/typo3-console": "^8.3.1",
+    "pluswerk/grumphp-config": "^10.2.8",
+    "saschaegerer/phpstan-typo3": "^2.1.1",
+    "spatie/phpunit-snapshot-assertions": "^5.4.0",
+    "ssch/typo3-rector": "^3.14.3",
+    "typo3/testing-framework": "^9.5.0"
   },
   "replace": {
     "pluswerk/mail_logger": "self.version",
@@ -62,11 +61,6 @@
     "post-update-cmd": [
       "@composer bump --dev-only",
       "@composer normalize"
-    ],
-    "post-autoload-dump": [
-      "@php vendor/bin/typo3 install:fixfolderstructure -vvv",
-      "@no-ci @php vendor/bin/typo3 database:updateschema -vvv",
-      "@no-ci @php vendor/bin/typo3 cache:flush -vvv"
     ],
     "test": "vendor/bin/phpunit --color=always",
     "test:update": "vendor/bin/phpunit --color=always -d --update-snapshots"
