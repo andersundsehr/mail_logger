@@ -97,6 +97,9 @@ class CleanupSettingsService
         );
     }
 
+    /**
+     * @deprecated Configured in SiteSets in future
+     */
     private function createBackendRequest(): ServerRequestInterface
     {
         return GeneralUtility::makeInstance(ServerRequestFactory::class)

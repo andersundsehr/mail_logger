@@ -3,7 +3,7 @@
 
 # EXT:mail_logger by anders und sehr GmbH
 
-This is an TYPO3 extension with some mail functions:
+This is a TYPO3 extension with some mail functions:
 1. [E-mail logging](#1-e-mail-logging)
 2. [E-mail templates](#2-e-mail-templates)
 
@@ -15,17 +15,13 @@ Install via composer or just copy the files into the TYPO3 extension folder:
 composer require pluswerk/mail-logger
 ```
 
-Add the Typoscript files to your sites Typoscript:
-- add `@import 'EXT:mail_logger/Configuration/TypoScript/constants.typoscript'` in your constants
-- and `@import 'EXT:mail_logger/Configuration/TypoScript/setup.typoscript'` in your setup.
-
 ## 1. E-mail logging
 
-The extension automatically log all outgoing mails of the TYPO3 system, which are sent via the TYPO3 mail API. Just install the extension and it works. All outgoing mails can be found in the backend module of this TYPO3 mail logger.
+The extension automatically logs all outgoing mails of the TYPO3 system that are sent via the TYPO3 mail API. Just install the extension and it works. All outgoing mails can be found in the backend module of this TYPO3 mail logger.
 
-By default the maximum logging time of e-mails is 30 days and can be changed as following:
+By default the maximum logging time of e-mails is 30 days and can be changed as follows:
 [see strtotime](http://php.net/manual/en/function.strtotime.php#refsect1-function.strtotime-examples)
-The mails will be anonymized after 7 days by default. It can be changed to anonymize directly, by setting anonymizeAfter to 0.
+The mails will be anonymized after 7 days by default. This can be changed to anonymize them immediately by setting `anonymizeAfter` to `0`.
 ```ts
 module.tx_maillogger.settings.cleanup {
   lifetime = 30 days
@@ -41,11 +37,11 @@ You can configure TYPO3 e-mail templates, written in Fluid, which are editable f
 *How does this work?*
 E-mails will be basically configured in a TypoScript configuration (configuration of the sender address for example).
 Afterwards a database entry will be generated from the editor, which extends this template with additional information (fluid template or receiver for example).
-The instance of such an e-mail can be extended or overridden afterwards via php in your own extension (for example: dynamic receiver).
+The instance of such an e-mail can be extended or overridden afterwards via PHP in your own extension (for example: a dynamic receiver).
 
 ### TypoScript example
 
-You always have to create a TypoScript template for a mail. The "label" is the only required field, the orher fields are optional.
+You always have to create a TypoScript template for a mail. The "label" is the only required field; the other fields are optional.
 
 ```typo3_typoscript
 # E-mail template
@@ -78,14 +74,9 @@ The message will be rendered by Fluid, so it is possible to print variables or u
 </f:format.nl2br>
 ```
 
-### sending E-mails via PHP
+### Sending e-mails via PHP
 
-E-mail instances "\\Pluswerk\\MailLogger\\Domain\\Model\\Mail\\TemplateBasedMailMessage" inherit from SwiftMailer class 
-"\\Swift\_Message".
-Therefor an e-mail instance have got following functions:  <http://swiftmailer.org/docs/messages.html>
-The easiest way is to use the functions of the "\\Pluswerk\\MailLogger\\Utility\\MailUtility" class.
-
-##### basic sample:
+##### Basic sample
 
 ```php
 <?php
@@ -101,7 +92,7 @@ use \Pluswerk\MailLogger\Utility\MailUtility;
 MailUtility::getMailByKey('exampleMailTemplateKey', 42, ['myVariable' => 'This mail was sent at ' . time(), 'myUser' => $myExtbaseUser])->send();
 ```
 
-#### example - passing E-mail parameters and sending attachment (FPDF for example)
+#### Example: passing e-mail parameters and sending an attachment
 
 ```php
 <?php
@@ -113,8 +104,7 @@ try {
     ]);
     $pdfFileName = 'myFile.pdf';
     $pdfFileByteStream = $fpdf->Output($pdfFileName, 'S');
-    $pdfFileAttachment = \Swift_Attachment::newInstance($pdfFileByteStream, $pdfFileName, 'application/pdf');
-    $mail->attach($pdfFileAttachment);
+    $mail->attach($pdfFileByteStream, $pdfFileName, 'application/pdf');
     $mail->send();
 } catch (\Exception $e) {
     // handle error
@@ -122,13 +112,13 @@ try {
 }
 ```
 
-You should always catch exceptions in your php code. Experience has shown that editors often don't add a template (or translation) etc.
+You should always catch exceptions in your PHP code. Experience has shown that editors often don't add a template or translation.
 Corresponding errors should somehow be handled!
 
 ### Custom fluid templates
-Sometimes you additionally want to wrap the mail templates from database with your own markup.
+Sometimes you additionally want to wrap the mail templates from the database with your own markup.
 Therefore we provide the option to customize the mail for your needs via fluid.
-Again - via Typoscript - you can configure a rendering definition for every mail template.
+Again, via TypoScript, you can configure a rendering definition for every mail template.
 
 ```typo3_typoscript
 module.tx_maillogger.settings.templateOverrides {
@@ -156,16 +146,16 @@ module.tx_maillogger.settings.templateOverrides {
 <p>This is my passed value: {settings.myValue}</p>
 ```
 
-The Variables "message" and "mailTemplate" are automatically provided to your template.
-You can use the actual message by simply wrapping it with a "f:format.raw"-viewhelper.
+The variables `message` and `mailTemplate` are automatically provided to your template.
+You can use the actual message by simply wrapping it with the `f:format.raw` ViewHelper.
 You can provide your own partial- and layout-paths for every template you add.
 Alternatively it will use the default paths provided by this extension.
 
-You can add your own parameters to the template via "settings"-option.
+You can add your own parameters to the template via the `settings` option.
 
-### example - Use a e-mail template in your own plugin
+### Example: use an e-mail template in your own plugin
 
-If a mail template can be selected dynamically by the editor, you can integrate a Flexform in the plugin, 
+If a mail template can be selected dynamically by the editor, you can integrate a FlexForm in the plugin,
 adding the following configuration:
 
 ```xml
@@ -185,19 +175,17 @@ adding the following configuration:
 </settings.userMailTemplate>
 ```
 
-### DKIM signing of mails (NOT SUPPORTED IN VERSION 2.0 until now)
+### DKIM signing of mails
 
-You can set a DKIM-signing for every mailtemplate you use for spam protection reasons.
-Therefore you have to define typoscript keys which you can select in the backend of a mail template.
+You can configure DKIM signing for every mail template. Define the DKIM keys in TypoScript and select the appropriate key in the backend mail-template record.
 
-Please note that you have to strip "-----BEGIN RSA PRIVATE KEY-----" and "-----END RSA PRIVATE KEY-----", as they are added from php with special chars you don't want to type via typoscript.
-So only paste your private keychain as key.
+Please strip `-----BEGIN RSA PRIVATE KEY-----` and `-----END RSA PRIVATE KEY-----`; the extension adds these delimiters when signing the mail. Only paste the private key contents into TypoScript.
 
-For an example regarding using DKIM signing and adding the TXT-records to your DNS you can visit [this article](https://support.rackspace.com/how-to/create-a-dkim-txt-record/)
+For an example of using DKIM signing and adding the TXT records to your DNS, see [this article](https://support.rackspace.com/how-to/create-a-dkim-txt-record/).
 
-Key: Your private key without "-----BEGIN RSA PRIVATE KEY-----" and "-----END RSA PRIVATE KEY-----"
+Key: Your private key without `-----BEGIN RSA PRIVATE KEY-----` and `-----END RSA PRIVATE KEY-----`
 Domain: The domain from which you want to send your mail (e.g. info@example.com)
-Selector will most likely remain "default".
+The selector will most likely remain `default`.
 
 ```typo3_typoscript
 module.tx_maillogger.settings.dkim {
