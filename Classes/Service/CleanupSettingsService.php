@@ -81,6 +81,7 @@ class CleanupSettingsService
 
     /**
      * @return mixed[]
+     * @deprecated will be replaced by SiteSet
      */
     private function getFullTypoScriptSettings(): array
     {
@@ -92,9 +93,13 @@ class CleanupSettingsService
             $this->configurationManager->setRequest($this->createBackendRequest());
         }
 
-        return $this->configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
-        );
+        try {
+            return $this->configurationManager->getConfiguration(
+                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+            );
+        } catch (RuntimeException) {
+            return [];
+        }
     }
 
     /**

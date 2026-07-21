@@ -43,20 +43,8 @@ class ConfigurationUtility
         if (!self::$currentModuleConfiguration) {
             // we always use the BackendConfigurationManager, because flux is overwriting the ConfigurationManager
             // and always uses the FrontendConfigurationManager instead of the correct one for the current context
-
-            // TYPO3 v13 requires $request parameter, v12 does not accept it
-            $reflection = new ReflectionMethod($this->backendConfigurationManager, 'getTypoScriptSetup');
-            if ($reflection->getNumberOfParameters() > 0) {
-                // v13: pass request parameter
-                $request = $this->getRequest();
-                /** @phpstan-ignore-next-line arguments.count - v13 compatibility */
-                $fullTypoScript = $this->backendConfigurationManager->getTypoScriptSetup($request);
-            } else {
-                // v12: no parameters
-                /** @phpstan-ignore-next-line arguments.count - v12 compatibility */
-                $fullTypoScript = $this->backendConfigurationManager->getTypoScriptSetup();
-            }
-
+            $request = $this->getRequest();
+            $fullTypoScript = $this->backendConfigurationManager->getTypoScriptSetup($request);
             if (empty($fullTypoScript['module.']['tx_maillogger.'])) {
                 throw new RuntimeException('Constants and setup TypoScript are not included!', 7780827935);
             }
@@ -67,6 +55,9 @@ class ConfigurationUtility
         return self::$currentModuleConfiguration[$key];
     }
 
+    /**
+     * @deprecated Will replace by SiteSet
+     */
     private function getRequest(): ServerRequestInterface
     {
         if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface) {

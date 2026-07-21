@@ -36,7 +36,6 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
     #[Override]
     protected function setUp(): void
     {
-        putenv('typo3DatabaseDriver=pdo_sqlite');
         parent::setUp();
         $this->importCSVDataSet(__DIR__ . '/../../Fixtures/pages.csv');
     }

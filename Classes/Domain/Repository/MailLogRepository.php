@@ -21,6 +21,8 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
  */
 class MailLogRepository extends Repository
 {
+    private const string CORRELATION_HEADER = 'X-Mail-Logger-Correlation-Id';
+
     protected $defaultOrderings = [
         'crdate' => QueryInterface::ORDER_DESCENDING,
     ];
@@ -129,5 +131,19 @@ class MailLogRepository extends Repository
     public function getAnonymizeAfter(): string
     {
         return $this->cleanupSettingsService->getAnonymizeAfter();
+    }
+
+    public function findByCorrelationId(string $correlationId): ?MailLog
+    {
+        $query = $this->createQuery();
+        $query->matching(
+            $query->like(
+                'headers',
+                '%' . self::CORRELATION_HEADER . ': ' . $correlationId . '%',
+            ),
+        );
+
+        $mailLog = $query->execute()->getFirst();
+        return $mailLog instanceof MailLog ? $mailLog : null;
     }
 }

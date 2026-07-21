@@ -62,7 +62,7 @@
       "@composer bump --dev-only",
       "@composer normalize"
     ],
-    "test": "vendor/bin/phpunit --color=always",
+    "test": "vendor/bin/phpunit --color=always --no-coverage",
     "test:update": "vendor/bin/phpunit --color=always -d --update-snapshots"
   },
   "scripts-descriptions": {
