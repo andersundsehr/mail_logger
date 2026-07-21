@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Service;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Pluswerk\MailLogger\Utility\ConfigurationUtility;
 use RuntimeException;
-use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Configuration\Exception\NoServerRequestGivenException;
 
 class CleanupSettingsService
 {
@@ -29,7 +24,7 @@ class CleanupSettingsService
     private string $anonymizeAfter = self::DEFAULT_ANONYMIZE_AFTER;
 
     public function __construct(
-        private readonly ConfigurationManagerInterface $configurationManager,
+        private readonly ConfigurationUtility $configurationUtility,
     ) {
     }
 
@@ -68,47 +63,18 @@ class CleanupSettingsService
             return;
         }
 
-        $fullSettings = $this->getFullTypoScriptSettings();
+        try {
+            $settings = $this->configurationUtility->getConfiguration('settings');
+        } catch (RuntimeException) {
+            $settings = [];
+        }
 
-        $settings = $fullSettings['module.']['tx_maillogger.']['settings.'] ?? [];
+        $cleanupSettings = $settings['cleanup'] ?? [];
 
-        $this->lifetime = $settings['cleanup.']['lifetime'] ?? self::DEFAULT_LIFETIME;
-        $this->anonymize = (bool)($settings['cleanup.']['anonymize'] ?? true);
-        $this->anonymizeAfter = $settings['cleanup.']['anonymizeAfter'] ?? self::DEFAULT_ANONYMIZE_AFTER;
+        $this->lifetime = $cleanupSettings['lifetime'] ?? self::DEFAULT_LIFETIME;
+        $this->anonymize = (bool)($cleanupSettings['anonymize'] ?? true);
+        $this->anonymizeAfter = $cleanupSettings['anonymizeAfter'] ?? self::DEFAULT_ANONYMIZE_AFTER;
 
         $this->loaded = true;
-    }
-
-    /**
-     * @return mixed[]
-     * @deprecated will be replaced by SiteSet
-     */
-    private function getFullTypoScriptSettings(): array
-    {
-        try {
-            return $this->configurationManager->getConfiguration(
-                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
-            );
-        } catch (NoServerRequestGivenException) {
-            $this->configurationManager->setRequest($this->createBackendRequest());
-        }
-
-        try {
-            return $this->configurationManager->getConfiguration(
-                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
-            );
-        } catch (RuntimeException) {
-            return [];
-        }
-    }
-
-    /**
-     * @deprecated Configured in SiteSets in future
-     */
-    private function createBackendRequest(): ServerRequestInterface
-    {
-        return GeneralUtility::makeInstance(ServerRequestFactory::class)
-            ->createServerRequest('GET', 'https://localhost/')
-            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_BE);
     }
 }

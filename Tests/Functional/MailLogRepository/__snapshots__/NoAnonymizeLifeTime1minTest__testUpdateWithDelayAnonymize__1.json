@@ -1,16 +1,16 @@
 {
-    "uid": 1,
-    "pid": 1,
-    "typoScriptKey": "typoscriptKey2345",
-    "subject": "subject2345",
-    "message": "message2345",
+    "debug": "",
+    "headers": "headers2345",
+    "mailBlindCopy": "mail2345@test.test",
+    "mailCopy": "mail2345@test.test",
     "mailFrom": "mail2345@test.test",
     "mailTo": "mail2345@test.test",
-    "mailCopy": "mail2345@test.test",
-    "mailBlindCopy": "mail2345@test.test",
-    "headers": "headers2345",
+    "message": "message2345",
+    "pid": 0,
     "result": "Not send until now",
     "status": 0,
-    "debug": "",
-    "sysLanguageUid": 0
+    "subject": "subject2345",
+    "sysLanguageUid": 0,
+    "typoScriptKey": "typoscriptKey2345",
+    "uid": 1
 }

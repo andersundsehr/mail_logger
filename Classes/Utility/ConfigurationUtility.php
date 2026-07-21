@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\Utility;
 
 use Psr\Http\Message\ServerRequestInterface;
-use ReflectionException;
-use ReflectionMethod;
 use RuntimeException;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
@@ -27,7 +25,7 @@ class ConfigurationUtility
 
     /**
      * @return array<array-key, mixed>
-     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public static function getCurrentModuleConfiguration(string $key): array
     {
@@ -36,7 +34,7 @@ class ConfigurationUtility
 
     /**
      * @return array<array-key, mixed>
-     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public function getConfiguration(string $key): array
     {
