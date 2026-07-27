@@ -7,6 +7,7 @@ namespace Pluswerk\MailLogger\Logging;
 use Override;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
+use TYPO3\CMS\Core\Mail\DelayedTransportInterface;
 use TYPO3\CMS\Core\Mail\Mailer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -25,6 +26,19 @@ class MailerExtender extends Mailer
 
         $this->loggingTransportFactory = GeneralUtility::makeInstance(LoggingTransportFactory::class);
         $this->transport = $this->loggingTransportFactory->create($this->transport);
+    }
+
+    #[Override]
+    public function getTransport(): TransportInterface
+    {
+        if (
+            $this->transport instanceof LoggingTransport
+            && $this->transport->getOriginalTransport() instanceof DelayedTransportInterface
+        ) {
+            return $this->transport->getOriginalTransport();
+        }
+
+        return parent::getTransport();
     }
 
     #[Override]
