@@ -17,6 +17,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Exception\NotImplementedException;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
+use RuntimeException;
 use Pluswerk\MailLogger\Domain\Repository\MailLogRepository;
 use Spatie\Snapshots\MatchesSnapshots;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -77,7 +78,9 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
     {
         $mailLog = $this->createAndSaveMailLog(2345);
 
-        $mailLog->_setProperty('crdate', date_modify(new DateTime(), '-' . self::DELAY_ANONYMIZE)->getTimestamp() - 5);
+        $anonymizeDate = new DateTime();
+        self::assertNotFalse($anonymizeDate->modify('-' . self::DELAY_ANONYMIZE));
+        $mailLog->_setProperty('crdate', $anonymizeDate->getTimestamp() - 5);
 
         $mailLog = $this->updatingMailLog($mailLog);
 
@@ -114,7 +117,9 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
     {
         $this->createAndSaveMailLog(7894);
 
-        $timestamp = date_modify(new DateTime(), '-' . self::DELAY_ANONYMIZE)->getTimestamp() - 5;
+        $anonymizeDate = new DateTime();
+        self::assertNotFalse($anonymizeDate->modify('-' . self::DELAY_ANONYMIZE));
+        $timestamp = $anonymizeDate->getTimestamp() - 5;
 
         GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_maillogger_domain_model_maillog')
@@ -158,7 +163,12 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
         $persistenceManager->persistAll();
         $persistenceManager->clearState();
 
-        return $mailLogRepository->findAll()->getFirst();
+        $mailLog = $mailLogRepository->findAll()->getFirst();
+        if (!$mailLog instanceof MailLog) {
+            throw new RuntimeException('Expected a persisted mail log.', 1785167102);
+        }
+
+        return $mailLog;
     }
 
     /**
@@ -177,6 +187,10 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
         $mailLogResult = $mailLogRepository->findAll()->getFirst();
         $persistenceManager->persistAll();
         $persistenceManager->clearState();
+        if (!$mailLogResult instanceof MailLog) {
+            throw new RuntimeException('Expected an updated mail log.', 1785167103);
+        }
+
         return $mailLogResult;
     }
 
@@ -205,7 +219,7 @@ abstract class AbstractMailLogRepositoryTest extends FunctionalTestCase
 
     protected function assertModelSnapshot(?MailLog $model): void
     {
-        $data = $model;
+        $data = null;
         if ($model instanceof AbstractDomainObject) {
             $data = $model->_getProperties();
             unset($data['tstamp'], $data['crdate']);

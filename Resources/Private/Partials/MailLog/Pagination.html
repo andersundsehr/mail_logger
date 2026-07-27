@@ -1,0 +1,87 @@
+<html xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:if condition="{paginator.numberOfPages} > 1">
+  <nav aria-label="pagebrowser">
+    <h4>Page {paginator.currentPageNumber} of {paginator.numberOfPages}</h4>
+    <ul class="pagination">
+      <f:if condition="{pagination.previousPageNumber}">
+        <li class="page-item">
+          <f:link.action
+            action="dashboard"
+            arguments="{currentPage: pagination.firstPageNumber}"
+            addQueryString="true"
+            class="page-link"
+            title="first"
+          >
+            <core:icon identifier="actions-view-paging-first"/>
+          </f:link.action>
+        </li>
+        <li class="page-item">
+          <f:link.action
+            action="dashboard"
+            arguments="{currentPage: pagination.previousPageNumber}"
+            addQueryString="true"
+            class="page-link"
+            title="previous"
+          >
+            <core:icon identifier="actions-view-paging-previous"/>
+          </f:link.action>
+        </li>
+      </f:if>
+
+      <f:if condition="{pagination.hasLessPages}">
+        <li class="page-item disabled">
+          <span class="page-link">…</span>
+        </li>
+      </f:if>
+
+      <f:for each="{pagination.allPageNumbers}" as="page">
+        <li class="page-item {f:if(condition: '{page} == {paginator.currentPageNumber}', then: 'active')}">
+          <f:link.action
+            action="dashboard"
+            arguments="{currentPage: page}"
+            addQueryString="true"
+            class="page-link"
+          >
+            {page}
+          </f:link.action>
+        </li>
+      </f:for>
+
+      <f:if condition="{pagination.hasMorePages}">
+        <li class="page-item disabled">
+          <span class="page-link">…</span>
+        </li>
+      </f:if>
+
+      <f:if condition="{pagination.nextPageNumber}">
+        <li class="page-item">
+          <f:link.action
+            action="dashboard"
+            arguments="{currentPage: pagination.nextPageNumber}"
+            addQueryString="true"
+            class="page-link"
+            title="next"
+          >
+            <core:icon identifier="actions-view-paging-next"/>
+          </f:link.action>
+        </li>
+        <li class="page-item">
+          <f:link.action
+            action="dashboard"
+            arguments="{currentPage: pagination.lastPageNumber}"
+            addQueryString="true"
+            class="page-link"
+            title="last"
+          >
+            <core:icon identifier="actions-view-paging-last"/>
+          </f:link.action>
+        </li>
+      </f:if>
+    </ul>
+  </nav>
+</f:if>
+
+</html>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\Command;
 
 use Override;
+use InvalidArgumentException;
 use Pluswerk\MailLogger\Utility\MailUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,8 +34,13 @@ class TestMailCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $args = $input->getArguments();
-        if ($args['templatekey'] !== '') {
-            $mail = MailUtility::getMailByKey($args['templatekey']);
+        $templateKey = $args['templatekey'];
+        if (!is_string($templateKey)) {
+            throw new InvalidArgumentException('The template key must be a string.', 1534397986);
+        }
+
+        if ($templateKey !== '') {
+            $mail = MailUtility::getMailByKey($templateKey);
         } else {
             $mail = GeneralUtility::makeInstance(MailMessage::class);
             $mail
@@ -42,7 +48,12 @@ class TestMailCommand extends Command
                 ->html(str_pad('This is a testmail (html).', (int)$input->getOption('textLength'), '_ '));
         }
 
-        $mail->addTo($args['addressto']);
+        $addressTo = $args['addressto'];
+        if (!is_string($addressTo)) {
+            throw new InvalidArgumentException('The recipient address must be a string.', 3898423976);
+        }
+
+        $mail->addTo($addressTo);
 
         if ($mail->send()) {
             $output->writeln('Successfully send mail');

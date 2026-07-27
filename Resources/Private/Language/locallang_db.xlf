@@ -75,6 +75,36 @@
       <trans-unit id="tx_maillogger.module.mailLog.status">
         <source>Result</source>
       </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.title">
+        <source>Filter mail log</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status">
+        <source>Status</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.all">
+        <source>All statuses</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.unknown">
+        <source>Unknown</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.sent">
+        <source>Sent successfully</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.error">
+        <source>Not sent / error</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.queued">
+        <source>Queued</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.apply">
+        <source>Apply filters</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.reset">
+        <source>Reset</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.noResults">
+        <source>No mail logs match the selected filters.</source>
+      </trans-unit>
 
       <!-- Model: MailTemplate -->
       <trans-unit id="tx_maillogger_domain_model_mailtemplate">

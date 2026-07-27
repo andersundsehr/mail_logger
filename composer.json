@@ -23,7 +23,7 @@
     "saschaegerer/phpstan-typo3": "^2.1.1",
     "spatie/phpunit-snapshot-assertions": "^5.4.0",
     "ssch/typo3-rector": "^3.14.3",
-    "typo3/testing-framework": "^9.5.0"
+    "typo3/testing-framework": "^9.6.1"
   },
   "replace": {
     "pluswerk/mail_logger": "self.version",
