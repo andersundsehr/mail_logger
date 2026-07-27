@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Pluswerk\MailLogger\Service;
 
+use Pluswerk\MailLogger\Utility\ConfigurationUtility;
 use RuntimeException;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 class CleanupSettingsService
 {
@@ -24,7 +24,7 @@ class CleanupSettingsService
     private string $anonymizeAfter = self::DEFAULT_ANONYMIZE_AFTER;
 
     public function __construct(
-        private readonly ConfigurationManagerInterface $configurationManager,
+        private readonly ConfigurationUtility $configurationUtility,
     ) {
     }
 
@@ -64,20 +64,16 @@ class CleanupSettingsService
         }
 
         try {
-            $fullSettings = $this->configurationManager->getConfiguration(
-                ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
-            );
+            $settings = $this->configurationUtility->getConfiguration('settings');
         } catch (RuntimeException) {
-            // Some rare cases have no server request available yet.
-            // Keep defaults and mark as not loaded so callers can check via isLoaded().
-            return;
+            $settings = [];
         }
 
-        $settings = $fullSettings['module.']['tx_maillogger.']['settings.'] ?? [];
+        $cleanupSettings = $settings['cleanup'] ?? [];
 
-        $this->lifetime = $settings['cleanup.']['lifetime'] ?? self::DEFAULT_LIFETIME;
-        $this->anonymize = (bool)($settings['cleanup.']['anonymize'] ?? true);
-        $this->anonymizeAfter = $settings['cleanup.']['anonymizeAfter'] ?? self::DEFAULT_ANONYMIZE_AFTER;
+        $this->lifetime = $cleanupSettings['lifetime'] ?? self::DEFAULT_LIFETIME;
+        $this->anonymize = (bool)($cleanupSettings['anonymize'] ?? true);
+        $this->anonymizeAfter = $cleanupSettings['anonymizeAfter'] ?? self::DEFAULT_ANONYMIZE_AFTER;
 
         $this->loaded = true;
     }

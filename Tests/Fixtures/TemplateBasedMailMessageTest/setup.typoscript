@@ -1,0 +1,26 @@
+module.tx_maillogger.settings {
+  cleanup {
+    anonymize = 0
+    anonymizeAfter = 0
+    lifetime = 1 day
+  }
+
+  mailTemplates {
+    functionalMail {
+      mailFromName = Sender {name}
+      mailFromAddress = sender@example.test
+      mailToNames = Receiver {name}
+      mailToAddresses = receiver@example.test
+      subject = Functional subject for {name}
+      message = <p>Rendered body for {name} with {color}</p>
+    }
+
+    directSubjectMail {
+      mailFromName = Sender
+      mailFromAddress = sender@example.test
+      mailToNames = Receiver
+      mailToAddresses = receiver@example.test
+      message = <p>Body with manually assigned subject for {name}</p>
+    }
+  }
+}

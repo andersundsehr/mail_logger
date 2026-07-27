@@ -133,6 +133,12 @@
       <trans-unit id="tx_maillogger_domain_model_mailtemplate.message">
         <target>Message</target>
       </trans-unit>
+      <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning">
+        <target>Warnung: Verwenden Sie nicht den ViewHelper f:format.html. Verwenden Sie stattdessen f:transform.html.</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning.title">
+        <target>Nicht unterstützter ViewHelper</target>
+      </trans-unit>
       <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_from_name">
         <target>Mail From (name)</target>
       </trans-unit>

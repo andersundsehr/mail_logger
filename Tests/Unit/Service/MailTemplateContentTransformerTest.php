@@ -65,8 +65,11 @@ final class MailTemplateContentTransformerTest extends TestCase
     }
 
     #[DataProvider('templateContentDataProvider')]
-    public function testTransformReplacesFormatHtmlWithoutSanitizeByDefault(string $content, string $expectedWithoutSanitize): void
-    {
+    public function testTransformReplacesFormatHtmlWithoutSanitizeByDefault(
+        string $content,
+        string $expectedWithoutSanitize,
+        string $_expectedWithSanitize,
+    ): void {
         self::assertSame($expectedWithoutSanitize, (new MailTemplateContentTransformer())->transform($content));
     }
 
@@ -97,6 +100,7 @@ final class MailTemplateContentTransformerTest extends TestCase
     {
         $extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
         $extensionConfiguration
+            ->expects(self::any())
             ->method('get')
             ->with('mail_logger', 'transformFormatHtmlWithSanitize')
             ->willReturn('1');

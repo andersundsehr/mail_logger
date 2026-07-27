@@ -101,6 +101,12 @@
       <trans-unit id="tx_maillogger_domain_model_mailtemplate.message">
         <source>Message</source>
       </trans-unit>
+      <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning">
+        <source>Warning: Do not use the f:format.html view helper. Use f:transform.html instead.</source>
+      </trans-unit>
+      <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning.title">
+        <source>Unsupported view helper</source>
+      </trans-unit>
       <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_from_name">
         <source>Mail From (name)</source>
       </trans-unit>
