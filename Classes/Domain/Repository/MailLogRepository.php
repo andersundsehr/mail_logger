@@ -8,12 +8,14 @@ use Override;
 use DateTime;
 use InvalidArgumentException;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
+use Pluswerk\MailLogger\Dto\MailLogFilter;
 use Pluswerk\MailLogger\Service\CleanupSettingsService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
@@ -53,7 +55,6 @@ class MailLogRepository extends Repository
     #[Override]
     public function add($mailLog): void
     {
-        assert($mailLog instanceof MailLog);
         if (!$mailLog->getCrdate()) {
             $mailLog->_setProperty('crdate', time());
         }
@@ -75,7 +76,6 @@ class MailLogRepository extends Repository
     #[Override]
     public function update($mailLog): void
     {
-        assert($mailLog instanceof MailLog);
         if ($mailLog->getTstamp() === null) {
             $mailLog->_setProperty('tstamp', time());
         }
@@ -99,7 +99,12 @@ class MailLogRepository extends Repository
         }
 
         $anonymizeAfter = $this->cleanupSettingsService->getAnonymizeAfter();
-        if ($mailLog->getCrdate() > date_modify(new DateTime(), '-' . $anonymizeAfter)->getTimestamp()) {
+        $anonymizeDate = new DateTime();
+        if ($anonymizeDate->modify('-' . $anonymizeAfter) === false) {
+            throw new InvalidArgumentException('Invalid anonymization period', 8348363882);
+        }
+
+        if ($mailLog->getCrdate() > $anonymizeDate->getTimestamp()) {
             return;
         }
 
@@ -145,5 +150,35 @@ class MailLogRepository extends Repository
 
         $mailLog = $query->execute()->getFirst();
         return $mailLog instanceof MailLog ? $mailLog : null;
+    }
+
+    /**
+     * @return QueryResultInterface<int, MailLog>
+     */
+    public function findByFilter(MailLogFilter $filter): QueryResultInterface
+    {
+        $query = $this->createQuery();
+        $constraints = [];
+        $textFilters = [
+            'mailTo' => $filter->getMailTo(),
+            'mailFrom' => $filter->getMailFrom(),
+            'subject' => $filter->getSubject(),
+        ];
+
+        foreach ($textFilters as $propertyName => $value) {
+            if ($value !== '') {
+                $constraints[] = $query->like($propertyName, '%' . $value . '%');
+            }
+        }
+
+        if ($filter->getStatus() !== null) {
+            $constraints[] = $query->equals('status', $filter->getStatus()->value);
+        }
+
+        if ($constraints !== []) {
+            $query->matching($query->logicalAnd(...$constraints));
+        }
+
+        return $query->execute();
     }
 }

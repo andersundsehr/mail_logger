@@ -19,8 +19,85 @@
           <mailLogger:translate id="module.mailLog.title"/>
         </div>
         <div class="maillogger-panel-body table-fit">
-          <mailLogger:pagination.paginate objects="{mailLogs}" as="paginatedMailLogs">
-            <table class="maillogger-task-list table table-striped table-hover">
+          <div class="p-3 border-bottom">
+            <h2 class="h4">
+              <mailLogger:translate id="module.mailLog.filter.title"/>
+            </h2>
+            <f:form action="dashboard" method="post">
+              <div class="row g-3 align-items-end">
+                <div class="col-12 col-md-6 col-xl">
+                  <label class="form-label" for="mail-log-filter-mail-to">
+                    <mailLogger:translate id="module.mailLog.mailTo"/>
+                  </label>
+                  <f:form.textfield
+                    id="mail-log-filter-mail-to"
+                    name="mailTo"
+                    value="{filter.mailTo}"
+                    class="form-control"
+                  />
+                </div>
+                <div class="col-12 col-md-6 col-xl">
+                  <label class="form-label" for="mail-log-filter-mail-from">
+                    <mailLogger:translate id="module.mailLog.mailFrom"/>
+                  </label>
+                  <f:form.textfield
+                    id="mail-log-filter-mail-from"
+                    name="mailFrom"
+                    value="{filter.mailFrom}"
+                    class="form-control"
+                  />
+                </div>
+                <div class="col-12 col-md-6 col-xl">
+                  <label class="form-label" for="mail-log-filter-subject">
+                    <mailLogger:translate id="module.mailLog.subject"/>
+                  </label>
+                  <f:form.textfield
+                    id="mail-log-filter-subject"
+                    name="subject"
+                    value="{filter.subject}"
+                    class="form-control"
+                  />
+                </div>
+                <div class="col-12 col-md-6 col-xl">
+                  <label class="form-label" for="mail-log-filter-status">
+                    <mailLogger:translate id="module.mailLog.filter.status"/>
+                  </label>
+                  <f:form.select
+                    id="mail-log-filter-status"
+                    name="status"
+                    value="{filter.statusValue}"
+                    class="form-select"
+                  >
+                    <f:form.select.option value="">
+                      <mailLogger:translate id="module.mailLog.filter.status.all"/>
+                    </f:form.select.option>
+                    <f:form.select.option value="0">
+                      <mailLogger:translate id="module.mailLog.filter.status.unknown"/>
+                    </f:form.select.option>
+                    <f:form.select.option value="1">
+                      <mailLogger:translate id="module.mailLog.filter.status.sent"/>
+                    </f:form.select.option>
+                    <f:form.select.option value="2">
+                      <mailLogger:translate id="module.mailLog.filter.status.error"/>
+                    </f:form.select.option>
+                    <f:form.select.option value="3">
+                      <mailLogger:translate id="module.mailLog.filter.status.queued"/>
+                    </f:form.select.option>
+                  </f:form.select>
+                </div>
+                <div class="col-12 col-md-auto">
+                  <f:form.submit
+                    value="{mailLogger:translate(id: 'module.mailLog.filter.apply')}"
+                    class="btn btn-primary"
+                  />
+                  <f:link.action action="dashboard" class="btn btn-default">
+                    <mailLogger:translate id="module.mailLog.filter.reset"/>
+                  </f:link.action>
+                </div>
+              </div>
+            </f:form>
+          </div>
+          <table class="maillogger-task-list table table-striped table-hover">
               <thead>
               <tr>
                 <th>
@@ -45,20 +122,27 @@
               </tr>
               </thead>
               <tbody>
-              <f:for each="{paginatedMailLogs.paginator.paginatedItems}" as="item">
+              <f:if condition="{paginator.numberOfPages} == 0">
+                <tr>
+                  <td colspan="7" class="text-center p-4">
+                    <mailLogger:translate id="module.mailLog.filter.noResults"/>
+                  </td>
+                </tr>
+              </f:if>
+              <f:for each="{paginator.paginatedItems}" as="item">
                 <tr>
                   <td>
                     <f:format.date format="Y-m-d H:i:s">{item.crdate}</f:format.date>
                   </td>
                   <td>
                     <f:if condition="{item.status} == 1">
-                      <span title="ok"><core:icon identifier="actions-check-circle-alt"/></span>
+                      <span title="{item.result}"><core:icon identifier="actions-check-circle-alt"/></span>
                     </f:if>
                     <f:if condition="{item.status} == 2">
-                      <span title="E-Mail not sent"><core:icon identifier="actions-exclamation-circle-alt"/></span>
+                      <span title="{item.result}"><core:icon identifier="actions-exclamation-circle-alt"/></span>
                     </f:if>
                     <f:if condition="{item.status} == 3">
-                      <span title="E-Mail queued"><core:icon identifier="actions-info-circle"/></span>
+                      <span title="{item.result}"><core:icon identifier="actions-info-circle"/></span>
                     </f:if>
                   </td>
                   <td>{item.typoScriptKey}</td>
@@ -73,69 +157,10 @@
                 </tr>
               </f:for>
               </tbody>
-            </table>
-            <div style="padding: 1rem">
-              <f:alias map="{pagination:paginatedMailLogs.pagination, paginator:paginatedMailLogs.paginator, name:paginatedMailLogs.name}">
-
-                <f:if condition="{paginator.numberOfPages} >= 1">
-                  <nav aria-label="pagebrowser">
-                    <h4>Page {paginator.currentPageNumber} of {paginator.numberOfPages}</h4>
-                    <ul class="f3-widget-paginator pagination">
-                      <f:if condition="{pagination.previousPageNumber} && {pagination.previousPageNumber} >= {pagination.firstPageNumber}">
-                        <li class="first">
-                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.firstPageNumber}',name:name)}" title="first" class="page-link">
-                            |<
-                          </a>
-                        </li>
-                        <li class="previous">
-                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.previousPageNumber}',name:name)}" title="previous" class="page-link">
-                            &lt;<
-                          </a>
-                        </li>
-                      </f:if>
-                      <f:if condition="{pagination.hasLessPages}">
-                        <li class="page-item">…</li>
-                      </f:if>
-                      <f:for each="{pagination.allPageNumbers}" as="page">
-                        <f:if condition="{page} == {paginator.currentPageNumber}">
-                          <f:then>
-                            <li class="page-item current active">
-                              <span class="page-link">{page}</span>
-                            </li>
-                          </f:then>
-                          <f:else>
-                            <f:if condition="{page + 5} > {paginator.currentPageNumber} && {page - 5} < {paginator.currentPageNumber}">
-                              <f:then>
-                                <li class="page-item">
-                                  <a href="{mailLogger:pagination.uri(arguments:'{currentPage:page}',name:name)}" class="page-link">{page}</a>
-                                </li>
-                              </f:then>
-                            </f:if>
-                          </f:else>
-                        </f:if>
-                      </f:for>
-                      <f:if condition="{pagination.hasMorePages}">
-                        <li class="page-item">…</li>
-                      </f:if>
-                      <f:if condition="{pagination.nextPageNumber} && {pagination.nextPageNumber} <= {pagination.lastPageNumber}">
-                        <li class="next">
-                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.nextPageNumber}',name:name)}" title="next" class="page-link">
-                            &gt;>
-                          </a>
-                        </li>
-                        <li class="last">
-                          <a href="{mailLogger:pagination.uri(arguments:'{currentPage:pagination.lastPageNumber}',name:name)}" title="last" class="page-link">
-                            &gt;|
-                          </a>
-                        </li>
-                      </f:if>
-                    </ul>
-                  </nav>
-                </f:if>
-
-              </f:alias>
-            </div>
-          </mailLogger:pagination.paginate>
+          </table>
+          <div class="p-3">
+            <f:render partial="MailLog/Pagination" arguments="{pagination: pagination, paginator: paginator}"/>
+          </div>
         </div>
       </div>
     </div>

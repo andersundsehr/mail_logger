@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\Logging;
 
 use Override;
+use RuntimeException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use TYPO3\CMS\Core\Mail\DelayedTransportInterface;
@@ -25,6 +26,10 @@ class MailerExtender extends Mailer
         parent::__construct($transport, $eventDispatcher);
 
         $this->loggingTransportFactory = GeneralUtility::makeInstance(LoggingTransportFactory::class);
+        if (!$this->transport instanceof TransportInterface) {
+            throw new RuntimeException('Mailer transport was not initialized.', 1785167101);
+        }
+
         $this->transport = $this->loggingTransportFactory->create($this->transport);
     }
 

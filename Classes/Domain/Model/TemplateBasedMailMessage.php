@@ -199,18 +199,21 @@ class TemplateBasedMailMessage extends MailMessage
 
     /**
      * @param array<string, string|null> $addressesAndNames
-     * @return array<array-key, string>
+     * @return array<int|string, string>
      */
     private function cleanUpMailAddressesAndNames(array $addressesAndNames): array
     {
+        $cleanedAddressesAndNames = [];
         foreach ($addressesAndNames as $mailAddress => $name) {
-            if (!$name && is_string($mailAddress)) {
-                unset($addressesAndNames[$mailAddress]);
-                $addressesAndNames[] = $mailAddress;
+            if ($name === null || $name === '') {
+                $cleanedAddressesAndNames[] = $mailAddress;
+                continue;
             }
+
+            $cleanedAddressesAndNames[$mailAddress] = $name;
         }
 
-        return $addressesAndNames;
+        return $cleanedAddressesAndNames;
     }
 
     private function getRenderedValue(string $value): string
@@ -247,7 +250,7 @@ class TemplateBasedMailMessage extends MailMessage
     {
         return $this->subjectTemplateSource !== ''
             ? $this->renderTemplateSource($this->subjectTemplateSource, $this->viewParameters)
-            : $this->getSubject();
+            : ($this->getSubject() ?? '');
     }
 
     /**
