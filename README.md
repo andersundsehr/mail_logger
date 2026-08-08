@@ -19,6 +19,8 @@ composer require pluswerk/mail-logger
 
 The extension automatically logs all outgoing mails of the TYPO3 system that are sent via the TYPO3 mail API. Just install the extension and it works. All outgoing mails can be found in the backend module of this TYPO3 mail logger.
 
+The backend module can filter the mail log by recipient, sender, subject, and status. Filters can be combined, for example to show only mails that were not sent.
+
 By default the maximum logging time of e-mails is 30 days and can be changed as follows:
 [see strtotime](http://php.net/manual/en/function.strtotime.php#refsect1-function.strtotime-examples)
 The mails will be anonymized after 7 days by default. This can be changed to anonymize them immediately by setting `anonymizeAfter` to `0`.

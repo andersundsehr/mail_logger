@@ -46,24 +46,26 @@ class LoggingTransport implements TransportInterface
         $this->fixTcaIfNotPresentIsUsedInInstallTool();
 
         [$message, $correlationId] = $this->getOrCreateCorrelationId($message);
-        $this->mailLog = $this->mailLogRepository->findByCorrelationId($correlationId);
+        $mailLog = $this->mailLogRepository->findByCorrelationId($correlationId);
 
-        if (!$this->mailLog instanceof MailLog) {
+        if (!$mailLog instanceof MailLog) {
             // Write a new mail log before sending or queueing the message.
-            $this->mailLog = GeneralUtility::makeInstance(MailLog::class);
-            $this->assignMailLog($message);
-            $this->mailLogRepository->add($this->mailLog);
+            $mailLog = GeneralUtility::makeInstance(MailLog::class);
+            $this->assignMailLog($message, $mailLog);
+            $this->mailLogRepository->add($mailLog);
             $this->persistenceManager->persistAll();
         }
+
+        $this->mailLog = $mailLog;
 
         $sendResult = $this->originalSend($message, $envelope);
 
         // write result to log after send
-        $this->mailLog->setResult($sendResult->result);
-        $this->mailLog->setStatus($sendResult->status->value);
-        $this->mailLog->setDebug($sendResult->getDebugMessage());
+        $mailLog->setResult($sendResult->result);
+        $mailLog->setStatus($sendResult->status->value);
+        $mailLog->setDebug($sendResult->getDebugMessage());
 
-        $this->mailLogRepository->update($this->mailLog);
+        $this->mailLogRepository->update($mailLog);
         $this->persistenceManager->persistAll();
 
         if ($sendResult->throwable) {
@@ -157,22 +159,22 @@ class LoggingTransport implements TransportInterface
         return $this->originalTransport->__toString();
     }
 
-    protected function assignMailLog(RawMessage $message): void
+    protected function assignMailLog(RawMessage $message, MailLog $mailLog): void
     {
         if (!$message instanceof Email) {
             return;
         }
 
         $messageBody = $message->getBody();
-        $this->mailLog->setMessage($this->getBodyAsHtml($messageBody));
-        $this->mailLog->setSubject($message->getSubject());
-        $this->mailLog->setMailFrom($this->addressesToString($message->getFrom()));
-        $this->mailLog->setMailTo($this->addressesToString($message->getTo()));
-        $this->mailLog->setMailCopy($this->addressesToString($message->getCc()));
-        $this->mailLog->setMailBlindCopy($this->addressesToString($message->getBcc()));
-        $this->mailLog->setHeaders($message->getHeaders()->toString());
+        $mailLog->setMessage($this->getBodyAsHtml($messageBody));
+        $mailLog->setSubject($message->getSubject() ?? '');
+        $mailLog->setMailFrom($this->addressesToString($message->getFrom()));
+        $mailLog->setMailTo($this->addressesToString($message->getTo()));
+        $mailLog->setMailCopy($this->addressesToString($message->getCc()));
+        $mailLog->setMailBlindCopy($this->addressesToString($message->getBcc()));
+        $mailLog->setHeaders($message->getHeaders()->toString());
         if ($message instanceof TemplateBasedMailMessage) {
-            $this->mailLog->setTypoScriptKey($message->getTypoScriptKey());
+            $mailLog->setTypoScriptKey($message->getTypoScriptKey());
         }
     }
 

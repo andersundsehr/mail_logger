@@ -3,6 +3,6 @@ includes:
   - vendor/andersundsehr/phpstan-git-files/extension.php
 
 parameters:
-  level: 6
+  level: 8
   reportUnmatchedIgnoredErrors: false
   treatPhpDocTypesAsCertain: false

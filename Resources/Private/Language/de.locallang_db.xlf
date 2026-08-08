@@ -81,6 +81,36 @@
       <trans-unit id="tx_maillogger.module.mailLog.status">
         <target>Result</target>
       </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.title">
+        <target>E-Mail-Protokoll filtern</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status">
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.all">
+        <target>Alle Status</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.unknown">
+        <target>Unbekannt</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.sent">
+        <target>Erfolgreich versendet</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.error">
+        <target>Nicht versendet / Fehler</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.status.queued">
+        <target>In Warteschlange</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.apply">
+        <target>Filter anwenden</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.reset">
+        <target>Zurücksetzen</target>
+      </trans-unit>
+      <trans-unit id="tx_maillogger.module.mailLog.filter.noResults">
+        <target>Keine E-Mail-Protokolle entsprechen den gewählten Filtern.</target>
+      </trans-unit>
 
       <!-- Model: Task -->
       <trans-unit id="tx_maillogger_domain_model_task">
