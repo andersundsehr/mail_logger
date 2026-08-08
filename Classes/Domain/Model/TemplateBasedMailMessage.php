@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pluswerk\MailLogger\Domain\Model;
 
 use Exception;
+use Pluswerk\MailLogger\Service\MailTemplateContentTransformer;
 use Override;
 use Pluswerk\MailLogger\Utility\ConfigurationUtility;
 use Symfony\Component\Mime\Crypto\DkimSigner;
@@ -193,7 +194,8 @@ class TemplateBasedMailMessage extends MailMessage
         }
 
         if (!empty($values['message'])) {
-            $this->messageTemplateSource = $values['message'];
+            $message = GeneralUtility::makeInstance(MailTemplateContentTransformer::class)->transform((string)$values['message']);
+            $this->messageTemplateSource = $message;
         }
     }
 

@@ -46,9 +46,7 @@ class LoggingTransport implements TransportInterface
         $this->fixTcaIfNotPresentIsUsedInInstallTool();
 
         [$message, $correlationId] = $this->getOrCreateCorrelationId($message);
-        $mailLog = $correlationId !== null
-            ? $this->mailLogRepository->findByCorrelationId($correlationId)
-            : null;
+        $mailLog = $this->mailLogRepository->findByCorrelationId($correlationId);
 
         if (!$mailLog instanceof MailLog) {
             // Write a new mail log before sending or queueing the message.

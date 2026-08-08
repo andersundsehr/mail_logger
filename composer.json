@@ -19,10 +19,10 @@
     "ext-json": "*",
     "andersundsehr/no-ci": "^1.1",
     "helhum/typo3-console": "^8.3.1",
-    "pluswerk/grumphp-config": "^10.2.8",
-    "saschaegerer/phpstan-typo3": "^2.1.1",
+    "pluswerk/grumphp-config": "^10.2.9",
+    "saschaegerer/phpstan-typo3": "^2.2.0",
     "spatie/phpunit-snapshot-assertions": "^5.4.0",
-    "ssch/typo3-rector": "^3.14.3",
+    "ssch/typo3-rector": "^3.14.4",
     "typo3/testing-framework": "^9.6.1"
   },
   "replace": {

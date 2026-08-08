@@ -1,2 +1,5 @@
 # cat=Cleanup; type=int+; label=Minimum interval between cleanup runs (in seconds)
 cleanupMinInterval = 3600
+
+# cat=Mail templates; type=boolean; label=Transform f:format.html with f:sanitize.html:Enable to wrap transformed f:format.html output in f:sanitize.html before f:transform.html.
+transformFormatHtmlWithSanitize = 0
