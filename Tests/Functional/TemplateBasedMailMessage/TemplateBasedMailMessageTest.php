@@ -51,6 +51,16 @@ final class TemplateBasedMailMessageTest extends FunctionalTestCase
         self::assertStringContainsString('Subject: Functional subject for Ada', $mailLog['headers']);
     }
 
+    public function testMailByIdUsesTheSelectedTemplateWhenTemplatesShareAKey(): void
+    {
+        $mail = MailUtility::getMailById(3, [
+            'name' => 'Ada',
+            'color' => 'blue',
+        ]);
+
+        self::assertSame('Selected functional mail', $mail->getMailTemplate()->getTitle());
+    }
+
     public function testManuallyAssignedSubjectIsKeptWhenTemplateDoesNotConfigureSubject(): void
     {
         $mail = MailUtility::getMailByKey('directSubjectMail', null, [
