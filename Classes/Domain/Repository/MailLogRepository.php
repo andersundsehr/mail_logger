@@ -6,6 +6,7 @@ namespace Pluswerk\MailLogger\Domain\Repository;
 
 use Override;
 use DateTime;
+use Exception;
 use InvalidArgumentException;
 use Pluswerk\MailLogger\Domain\Model\MailLog;
 use Pluswerk\MailLogger\Dto\MailLogFilter;
@@ -99,9 +100,10 @@ class MailLogRepository extends Repository
         }
 
         $anonymizeAfter = $this->cleanupSettingsService->getAnonymizeAfter();
-        $anonymizeDate = new DateTime();
-        if ($anonymizeDate->modify('-' . $anonymizeAfter) === false) {
-            throw new InvalidArgumentException('Invalid anonymization period', 8348363882);
+        try {
+            $anonymizeDate = new DateTime('-' . $anonymizeAfter);
+        } catch (Exception $exception) {
+            throw new InvalidArgumentException('Invalid anonymization period', 8348363882, $exception);
         }
 
         if ($mailLog->getCrdate() > $anonymizeDate->getTimestamp()) {
