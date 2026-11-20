@@ -19,7 +19,7 @@
     "ext-json": "*",
     "andersundsehr/no-ci": "^1.1",
     "helhum/typo3-console": "^8.3.1",
-    "pluswerk/grumphp-config": "^10.2.9",
+    "pluswerk/grumphp-config": "^11.4.0",
     "saschaegerer/phpstan-typo3": "^2.2.0",
     "spatie/phpunit-snapshot-assertions": "^5.4.0",
     "ssch/typo3-rector": "^3.14.4",
@@ -41,6 +41,7 @@
   },
   "config": {
     "allow-plugins": {
+      "a9f/fractor-extension-installer": true,
       "andersundsehr/no-ci": true,
       "cweagans/composer-patches": true,
       "ergebnis/composer-normalize": true,
