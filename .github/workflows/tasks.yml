@@ -11,6 +11,10 @@ jobs:
       matrix:
         php: [  '8.3', '8.4', '8.5', '8.6' ]
         typo3: [ '13' ]
+        include:
+          # pluswerk/grumphp-config 10.x does not allow PHP 8.6 (only 11.4.0 does, composer.json allows ^10.2.9)
+          - php: '8.6'
+            ignorePlatformReqs: '--ignore-platform-req=php+'
     steps:
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
@@ -23,8 +27,11 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.php }}-composer-
-      - run: composer require typo3/cms-frontend="^${{ matrix.typo3 }}" --dev
-      - run: composer install --no-interaction --no-progress
+      - run: composer require typo3/cms-frontend="^${{ matrix.typo3 }}" --dev ${{ matrix.ignorePlatformReqs }}
+      - run: composer install --no-interaction --no-progress ${{ matrix.ignorePlatformReqs }}
+      # --ignore-platform-req=php+ may only skip the PHP check of dev dependencies (e.g. pluswerk/grumphp-config)
+      - if: matrix.php == '8.6'
+        run: composer check-platform-reqs --no-dev
       - run: ./vendor/bin/grumphp run --ansi
       - run: composer test
 
