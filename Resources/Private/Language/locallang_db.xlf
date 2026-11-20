@@ -1,199 +1,195 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <xliff version="1.0">
-  <file source-language="en" datatype="plaintext" original="messages" date="2015-03-18T09:55:40Z" product-name="mail_logger">
-    <header/>
-    <body>
-      <!-- Module Navigation -->
-      <trans-unit id="mlang_tabs_tab">
-        <source>Mail Log</source>
-      </trans-unit>
-      <trans-unit id="mlang_labels_tabdescr">
-        <source>Mail Logger by anders und sehr GmbH</source>
-      </trans-unit>
-      <trans-unit id="container_title">
-        <source>Mail Log</source>
-      </trans-unit>
-      <trans-unit id="container_mail_templates">
-        <source>Mail templates</source>
-      </trans-unit>
-
-      <!-- Module -->
-      <trans-unit id="tx_maillogger.module.dashboard.title">
-        <source>Mail Logger</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title">
-        <source>Outgoing E-mails</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title.singleLog">
-        <source>Outgoing E-mail</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title.fromTo">
-        <source>Sender/Receiver</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title.info">
-        <source>Info</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title.message">
-        <source>Message</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title.headers">
-        <source>Headers</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.title.debug">
-        <source>Debug</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.details">
-        <source>Details</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.typoScriptKey">
-        <source>Template</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.subject">
-        <source>Subject</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.mailTo">
-        <source>To</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.result">
-        <source>Accepted recipients</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.mailFrom">
-        <source>From</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.mailCopy">
-        <source>CC</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.mailBlindCopy">
-        <source>BCC</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.sysLanguageUid">
-        <source>Language</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.date">
-        <source>Date</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.status">
-        <source>Result</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.title">
-        <source>Filter mail log</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.status">
-        <source>Status</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.status.all">
-        <source>All statuses</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.status.unknown">
-        <source>Unknown</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.status.sent">
-        <source>Sent successfully</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.status.error">
-        <source>Not sent / error</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.status.queued">
-        <source>Queued</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.apply">
-        <source>Apply filters</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.reset">
-        <source>Reset</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.filter.noResults">
-        <source>No mail logs match the selected filters.</source>
-      </trans-unit>
-
-      <!-- Model: MailTemplate -->
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate">
-        <source>E-Mail Template</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mailingOptions">
-        <source>Mailing Options</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.typo_script_key">
-        <source>Vorlage</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.template_path_key">
-        <source>Rendering Template Vorlage</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.dkim_key">
-        <source>DKIM Signaturdomain</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.title">
-        <source>Title</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.subject">
-        <source>Subject</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.message">
-        <source>Message</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning">
-        <source>Warning: Do not use the f:format.html view helper. Use f:transform.html instead.</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning.title">
-        <source>Unsupported view helper</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_from_name">
-        <source>Mail From (name)</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_from_address">
-        <source>Mail From (mail address)</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_to_names">
-        <source>Mail To (names, comma separated)</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_to_addresses">
-        <source>Mail To (mail addresses, comma separated)</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_copy_addresses">
-        <source>Mail Copies (cc mail addresses, comma separated)</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_blind_copy_addresses">
-        <source>Mail Blind Copies (bcc mail addresses, comma separated)</source>
-      </trans-unit>
-
-      <!-- Model: MailLog -->
-      <trans-unit id="tx_maillogger_domain_model_maillog">
-        <source>E-Mail Log</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.typo_script_key">
-        <source>Vorlage</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.subject">
-        <source>Subject</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.message">
-        <source>Message</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.mail_from">
-        <source>Mail From</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.mail_to">
-        <source>Mail To</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.mail_copy">
-        <source>Mail Copies</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.mail_blind_copy">
-        <source>Mail Blind Copies</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.result">
-        <source>Result</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger.module.mailLog.result_message">
-        <source>Result</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.status">
-        <source>Status</source>
-      </trans-unit>
-      <trans-unit id="tx_maillogger_domain_model_maillog.headers">
-        <source>Headers</source>
-      </trans-unit>
-
-    </body>
-  </file>
+    <file source-language="en" datatype="plaintext" original="messages" date="2015-03-18T09:55:40Z" product-name="mail_logger">
+        <header/>
+        <body>
+            <!-- Module Navigation -->
+            <trans-unit id="mlang_tabs_tab">
+                <source>Mail Log</source>
+            </trans-unit>
+            <trans-unit id="mlang_labels_tabdescr">
+                <source>Mail Logger by anders und sehr GmbH</source>
+            </trans-unit>
+            <trans-unit id="container_title">
+                <source>Mail Log</source>
+            </trans-unit>
+            <trans-unit id="container_mail_templates">
+                <source>Mail templates</source>
+            </trans-unit>
+            <!-- Module -->
+            <trans-unit id="tx_maillogger.module.dashboard.title">
+                <source>Mail Logger</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title">
+                <source>Outgoing E-mails</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title.singleLog">
+                <source>Outgoing E-mail</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title.fromTo">
+                <source>Sender/Receiver</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title.info">
+                <source>Info</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title.message">
+                <source>Message</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title.headers">
+                <source>Headers</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.title.debug">
+                <source>Debug</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.details">
+                <source>Details</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.typoScriptKey">
+                <source>Template</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.subject">
+                <source>Subject</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.mailTo">
+                <source>To</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.result">
+                <source>Accepted recipients</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.mailFrom">
+                <source>From</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.mailCopy">
+                <source>CC</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.mailBlindCopy">
+                <source>BCC</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.sysLanguageUid">
+                <source>Language</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.date">
+                <source>Date</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.status">
+                <source>Result</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.title">
+                <source>Filter mail log</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.status">
+                <source>Status</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.status.all">
+                <source>All statuses</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.status.unknown">
+                <source>Unknown</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.status.sent">
+                <source>Sent successfully</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.status.error">
+                <source>Not sent / error</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.status.queued">
+                <source>Queued</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.apply">
+                <source>Apply filters</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.reset">
+                <source>Reset</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.filter.noResults">
+                <source>No mail logs match the selected filters.</source>
+            </trans-unit>
+            <!-- Model: MailTemplate -->
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate">
+                <source>E-Mail Template</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mailingOptions">
+                <source>Mailing Options</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.typo_script_key">
+                <source>Vorlage</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.template_path_key">
+                <source>Rendering Template Vorlage</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.dkim_key">
+                <source>DKIM Signaturdomain</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.subject">
+                <source>Subject</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.message">
+                <source>Message</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning">
+                <source>Warning: Do not use the f:format.html view helper. Use f:transform.html instead.</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.format_html_warning.title">
+                <source>Unsupported view helper</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_from_name">
+                <source>Mail From (name)</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_from_address">
+                <source>Mail From (mail address)</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_to_names">
+                <source>Mail To (names, comma separated)</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_to_addresses">
+                <source>Mail To (mail addresses, comma separated)</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_copy_addresses">
+                <source>Mail Copies (cc mail addresses, comma separated)</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_mailtemplate.mail_blind_copy_addresses">
+                <source>Mail Blind Copies (bcc mail addresses, comma separated)</source>
+            </trans-unit>
+            <!-- Model: MailLog -->
+            <trans-unit id="tx_maillogger_domain_model_maillog">
+                <source>E-Mail Log</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.typo_script_key">
+                <source>Vorlage</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.subject">
+                <source>Subject</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.message">
+                <source>Message</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.mail_from">
+                <source>Mail From</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.mail_to">
+                <source>Mail To</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.mail_copy">
+                <source>Mail Copies</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.mail_blind_copy">
+                <source>Mail Blind Copies</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.result">
+                <source>Result</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger.module.mailLog.result_message">
+                <source>Result</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.status">
+                <source>Status</source>
+            </trans-unit>
+            <trans-unit id="tx_maillogger_domain_model_maillog.headers">
+                <source>Headers</source>
+            </trans-unit>
+        </body>
+    </file>
 </xliff>
